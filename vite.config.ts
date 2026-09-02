@@ -9,7 +9,7 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: "autoUpdate",
-      includeAssets: ["favicon.svg", "apple-touch-icon.png", "icons/*.png"],
+      includeAssets: ["favicon.svg", "apple-touch-icon.png"],
       manifest: {
         id: "/",
         name: "BJuris — Escritório Jurídico Digital",
@@ -23,15 +23,13 @@ export default defineConfig({
         start_url: "/",
         scope: "/",
         icons: [
-          { src: "icons/icon-192.png", sizes: "192x192", type: "image/png", purpose: "any" },
-          { src: "icons/icon-512.png", sizes: "512x512", type: "image/png", purpose: "any" },
-          { src: "icons/icon-maskable-512.png", sizes: "512x512", type: "image/png", purpose: "maskable" }
+          { src: "favicon.svg", sizes: "192x192", type: "image/svg+xml", purpose: "any" }
         ]
       },
       workbox: {
         // Cache estratégico: shell da aplicação + assets estáticos.
         // Dados sensíveis de clientes NUNCA são cacheados aqui (seção 3 e 39 do briefing).
-        globPatterns: ["**/*.{js,css,html,svg,png,ico,woff2}"],
+        globPatterns: ["**/*.{js,css,html,svg,png,ico}"],
         navigateFallback: "/index.html",
         runtimeCaching: [
           {
@@ -51,7 +49,7 @@ export default defineConfig({
         ]
       },
       devOptions: {
-        enabled: true
+        enabled: false
       }
     })
   ],
@@ -59,6 +57,8 @@ export default defineConfig({
     port: 5173
   },
   build: {
-    sourcemap: true
+    sourcemap: false,
+    outDir: "dist",
+    emptyOutDir: true
   }
 });
