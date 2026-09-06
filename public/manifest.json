@@ -1,0 +1,25 @@
+{
+  "short_name": "BJuris",
+  "name": "BJuris - Gestão Advocatícia & Processual",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#0b1b2b",
+  "theme_color": "#102a43",
+  "display": "standalone",
+  "orientation": "portrait",
+  "description": "Sistema completo de gestão para advogados, acompanhamento de prazos e processos CNJ com PWA e Notificações.",
+  "categories": ["business", "legal", "productivity"]
+}
