@@ -21,15 +21,17 @@ import {
   MessageCircle,
   Paperclip,
   Eye,
-  FolderOpen
+  FolderOpen,
+  Edit3
 } from 'lucide-react';
 
 export const Clientes: React.FC = () => {
-  const { clientes, processos, setModalState, addDocumentoCliente } = useLegal();
+  const { clientes, processos, setModalState, addDocumentoCliente, updateCliente } = useLegal();
 
   const [searchTerm, setSearchTerm] = useState('');
   const [filterTipo, setFilterTipo] = useState<'todos' | 'PF' | 'PJ'>('todos');
   const [selectedCliente, setSelectedCliente] = useState<Cliente | null>(null);
+  const [editingCliente, setEditingCliente] = useState<Cliente | null>(null);
 
   // File Upload & Camera Scan State for Selected Client
   const cameraInputRef = useRef<HTMLInputElement>(null);
@@ -270,20 +272,28 @@ export const Clientes: React.FC = () => {
                   </button>
                 </div>
 
-                <div className="grid grid-cols-2 gap-2">
+                <div className="grid grid-cols-3 gap-1.5">
                   <a
                     href={`https://wa.me/55${cleanWhatsapp}`}
                     target="_blank"
                     rel="noreferrer"
-                    className="px-2.5 py-1.5 rounded-xl bg-emerald-100 hover:bg-emerald-200 text-emerald-900 text-xs font-bold transition-colors flex items-center justify-center gap-1"
+                    className="px-2 py-1.5 rounded-xl bg-emerald-100 hover:bg-emerald-200 text-emerald-900 text-xs font-bold transition-colors flex items-center justify-center gap-1"
                   >
                     <MessageCircle className="w-3.5 h-3.5 text-emerald-700" />
                     WhatsApp
                   </a>
 
                   <button
+                    onClick={() => setEditingCliente(c)}
+                    className="px-2 py-1.5 rounded-xl bg-amber-100 hover:bg-amber-200 text-amber-950 font-bold text-xs transition-all flex items-center justify-center gap-1 border border-amber-300"
+                  >
+                    <Edit3 className="w-3.5 h-3.5 text-amber-700" />
+                    Editar
+                  </button>
+
+                  <button
                     onClick={() => handleGerarProcuracao(c)}
-                    className="px-2.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-900 font-bold text-xs transition-all flex items-center justify-center gap-1 border border-slate-300"
+                    className="px-2 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-900 font-bold text-xs transition-all flex items-center justify-center gap-1 border border-slate-300"
                   >
                     <FileText className="w-3.5 h-3.5 text-amber-600" />
                     Procuração
@@ -421,6 +431,216 @@ export const Clientes: React.FC = () => {
                 Concluir
               </button>
             </div>
+
+          </div>
+        </div>
+      )}
+
+      {/* Modal de Edição de Cliente */}
+      {editingCliente && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in">
+          <div className="w-full max-w-2xl bg-white rounded-2xl border border-slate-200 shadow-2xl p-6 relative max-h-[92vh] overflow-y-auto">
+            
+            <button
+              onClick={() => setEditingCliente(null)}
+              className="absolute top-4 right-4 text-slate-400 hover:text-slate-900 transition-colors"
+            >
+              <X className="w-6 h-6" />
+            </button>
+
+            <div className="flex items-center gap-3 mb-5 pb-3 border-b border-slate-100">
+              <div className="p-3 rounded-xl bg-amber-100 text-amber-800 border border-amber-300">
+                <Edit3 className="w-6 h-6" />
+              </div>
+              <div>
+                <h3 className="text-lg font-extrabold text-slate-900">Editar Cadastro do Cliente</h3>
+                <p className="text-xs text-slate-600 font-medium">Atualize os dados cadastrais de {editingCliente.nome}</p>
+              </div>
+            </div>
+
+            <form
+              onSubmit={e => {
+                e.preventDefault();
+                const form = e.target as HTMLFormElement;
+                const formData = new FormData(form);
+                updateCliente(editingCliente.id, {
+                  nome: formData.get('nome') as string,
+                  tipo: formData.get('tipo') as 'PF' | 'PJ',
+                  documento: formData.get('documento') as string,
+                  rgOuIe: formData.get('rgOuIe') as string,
+                  cnh: formData.get('cnh') as string,
+                  email: formData.get('email') as string,
+                  telefone: formData.get('telefone') as string,
+                  whatsapp: formData.get('whatsapp') as string,
+                  profissaoOuRamo: formData.get('profissaoOuRamo') as string,
+                  estadoCivil: formData.get('estadoCivil') as string,
+                  nacionalidade: formData.get('nacionalidade') as string,
+                  endereco: formData.get('endereco') as string,
+                  observacoes: formData.get('observacoes') as string,
+                });
+                setEditingCliente(null);
+                alert('✅ Cadastro do cliente atualizado com sucesso!');
+              }}
+              className="space-y-4 text-xs"
+            >
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1">Tipo de Cliente</label>
+                  <select
+                    name="tipo"
+                    defaultValue={editingCliente.tipo}
+                    className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 font-bold focus:border-amber-500 focus:outline-none"
+                  >
+                    <option value="PF">Pessoa Física (PF)</option>
+                    <option value="PJ">Pessoa Jurídica (PJ)</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1">Nome Completo / Razão Social</label>
+                  <input
+                    type="text"
+                    name="nome"
+                    defaultValue={editingCliente.nome}
+                    required
+                    className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 font-medium focus:border-amber-500 focus:outline-none"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1">CPF ou CNPJ</label>
+                  <input
+                    type="text"
+                    name="documento"
+                    defaultValue={editingCliente.documento}
+                    required
+                    className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 font-medium focus:border-amber-500 focus:outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1">RG ou Inscrição Estadual</label>
+                  <input
+                    type="text"
+                    name="rgOuIe"
+                    defaultValue={editingCliente.rgOuIe || ''}
+                    className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 font-medium focus:border-amber-500 focus:outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1">CNH (Se houver)</label>
+                  <input
+                    type="text"
+                    name="cnh"
+                    defaultValue={editingCliente.cnh || ''}
+                    className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 font-medium focus:border-amber-500 focus:outline-none"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1">E-mail</label>
+                  <input
+                    type="email"
+                    name="email"
+                    defaultValue={editingCliente.email}
+                    className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 font-medium focus:border-amber-500 focus:outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1">Telefone</label>
+                  <input
+                    type="text"
+                    name="telefone"
+                    defaultValue={editingCliente.telefone}
+                    className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 font-medium focus:border-amber-500 focus:outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1">WhatsApp</label>
+                  <input
+                    type="text"
+                    name="whatsapp"
+                    defaultValue={editingCliente.whatsapp}
+                    className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 font-medium focus:border-amber-500 focus:outline-none"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1">Profissão / Ramo</label>
+                  <input
+                    type="text"
+                    name="profissaoOuRamo"
+                    defaultValue={editingCliente.profissaoOuRamo || ''}
+                    className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 font-medium focus:border-amber-500 focus:outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1">Estado Civil</label>
+                  <input
+                    type="text"
+                    name="estadoCivil"
+                    defaultValue={editingCliente.estadoCivil || ''}
+                    className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 font-medium focus:border-amber-500 focus:outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1">Nacionalidade</label>
+                  <input
+                    type="text"
+                    name="nacionalidade"
+                    defaultValue={editingCliente.nacionalidade || 'Brasileiro(a)'}
+                    className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 font-medium focus:border-amber-500 focus:outline-none"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block font-bold text-slate-700 mb-1">Endereço Completo</label>
+                <input
+                  type="text"
+                  name="endereco"
+                  defaultValue={editingCliente.endereco}
+                  className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 font-medium focus:border-amber-500 focus:outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="block font-bold text-slate-700 mb-1">Observações do Cliente</label>
+                <textarea
+                  name="observacoes"
+                  rows={3}
+                  defaultValue={editingCliente.observacoes || ''}
+                  className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 font-medium focus:border-amber-500 focus:outline-none"
+                />
+              </div>
+
+              <div className="pt-4 border-t border-slate-100 flex items-center justify-end gap-2">
+                <button
+                  type="button"
+                  onClick={() => setEditingCliente(null)}
+                  className="px-5 py-2.5 rounded-xl bg-slate-100 text-slate-700 font-bold text-xs hover:bg-slate-200 transition-colors"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  className="px-6 py-2.5 rounded-xl btn-gold-3d text-slate-950 font-black text-xs shadow-md transition-all"
+                >
+                  Salvar Alterações
+                </button>
+              </div>
+            </form>
 
           </div>
         </div>

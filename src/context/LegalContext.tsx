@@ -17,6 +17,20 @@ import {
 } from '../services/mockData';
 import { sendNativeNotification, triggerDeadlineAlert } from '../utils/pwaNotifications';
 
+const CLEAN_PERFIL: AdvogadoPerfil = {
+  nome: "Advogado(a)",
+  oabNumero: "",
+  oabUf: "",
+  email: "",
+  telefone: "",
+  escritorio: "",
+  cpf: "",
+  fotoUrl: "",
+  notificacoesAtivas: true,
+  somAlerta: true,
+  vibracao: true,
+};
+
 interface LegalContextType {
   activeTab: string;
   setActiveTab: (tab: string) => void;
@@ -37,6 +51,7 @@ interface LegalContextType {
   addProcesso: (novo: Omit<Processo, 'id' | 'movimentacoes' | 'ultimaMovimentacao'>) => void;
   updateProcessoStatus: (id: string, status: StatusProcesso) => void;
   addCliente: (novo: Omit<Cliente, 'id' | 'dataCadastro' | 'processosIds' | 'documentosAnexados'>) => void;
+  updateCliente: (id: string, atualizado: Partial<Cliente>) => void;
   addDocumentoCliente: (clienteId: string, doc: Omit<DocumentoCliente, 'id' | 'dataAnexo'>) => void;
   addPrazo: (novo: Omit<PrazoAudiencia, 'id' | 'concluido'>) => void;
   togglePrazoConcluido: (id: string) => void;
@@ -72,27 +87,27 @@ export const LegalProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   const [perfil, setPerfil] = useState<AdvogadoPerfil>(() => {
     const saved = localStorage.getItem('bjuris_perfil');
-    return saved ? JSON.parse(saved) : MOCK_PERFIL;
+    return saved ? JSON.parse(saved) : CLEAN_PERFIL;
   });
 
   const [processos, setProcessos] = useState<Processo[]>(() => {
     const saved = localStorage.getItem('bjuris_processos');
-    return saved ? JSON.parse(saved) : MOCK_PROCESSOS;
+    return saved ? JSON.parse(saved) : [];
   });
 
   const [clientes, setClientes] = useState<Cliente[]>(() => {
     const saved = localStorage.getItem('bjuris_clientes');
-    return saved ? JSON.parse(saved) : MOCK_CLIENTES;
+    return saved ? JSON.parse(saved) : [];
   });
 
   const [prazos, setPrazos] = useState<PrazoAudiencia[]>(() => {
     const saved = localStorage.getItem('bjuris_prazos');
-    return saved ? JSON.parse(saved) : MOCK_PRAZOS;
+    return saved ? JSON.parse(saved) : [];
   });
 
   const [financeiro, setFinanceiro] = useState<HonorarioFinanceiro[]>(() => {
     const saved = localStorage.getItem('bjuris_financeiro');
-    return saved ? JSON.parse(saved) : MOCK_FINANCEIRO;
+    return saved ? JSON.parse(saved) : [];
   });
 
   // PWA Install state
@@ -210,6 +225,10 @@ export const LegalProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     setClientes(prev => [novoCliente, ...prev]);
   };
 
+  const updateCliente = (id: string, atualizado: Partial<Cliente>) => {
+    setClientes(prev => prev.map(c => c.id === id ? { ...c, ...atualizado } : c));
+  };
+
   const addDocumentoCliente = (clienteId: string, doc: Omit<DocumentoCliente, 'id' | 'dataAnexo'>) => {
     const novoDoc: DocumentoCliente = {
       ...doc,
@@ -292,6 +311,7 @@ export const LegalProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       addProcesso,
       updateProcessoStatus,
       addCliente,
+      updateCliente,
       addDocumentoCliente,
       addPrazo,
       togglePrazoConcluido,

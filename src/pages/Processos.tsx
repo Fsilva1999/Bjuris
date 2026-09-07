@@ -130,10 +130,10 @@ export const Processos: React.FC = () => {
         <div>
           <h2 className="text-2xl font-black font-outfit text-slate-900 flex items-center gap-2">
             <Briefcase className="w-7 h-7 text-amber-600" />
-            Gestão de Processos CNJ & Varas do Maranhão
+            Gestão de Processos CNJ & Varas
           </h2>
           <p className="text-xs text-slate-600 font-medium">
-            Visualização de capa e inteiro teor dos autos digitais (TJMA, TRT16, TRF1 e tribunais nacionais)
+            Visualização de capa e inteiro teor dos autos digitais (TJ, TRT, TRF e tribunais nacionais)
           </p>
         </div>
 

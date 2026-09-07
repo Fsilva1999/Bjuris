@@ -262,31 +262,10 @@ export const Configuracoes: React.FC = () => {
           <Settings className="w-7 h-7 text-[#b8860b]" />
           Configurações & Perfil OAB
         </h2>
-        <p className="text-xs text-slate-600 font-medium">Gerencie seus dados, logo, notificações e realize backup dos seus dados</p>
+        <p className="text-xs text-slate-600 font-medium">Gerencie seus dados, notificações e realize backup dos seus dados</p>
       </div>
 
       <form onSubmit={handleSave} className="space-y-6">
-
-        {/* Logo */}
-        <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
-          <h3 className="text-sm font-black text-slate-900 flex items-center gap-2">
-            <ImageIcon className="w-5 h-5 text-[#b8860b]" />
-            Logo do Escritório (Alta Resolução)
-          </h3>
-          <div className="p-4 rounded-xl bg-[#fef9c3]/50 border border-[#d4af37]/40 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div className="flex items-center gap-4">
-              <img src={logoUrl} alt="Logo" className="w-16 h-16 object-contain bg-white p-1.5 rounded-xl border border-slate-300 shadow-md" />
-              <div>
-                <h4 className="text-xs font-black text-slate-900">Logo Atual</h4>
-                <p className="text-xs text-slate-600 font-medium mt-0.5">Exibida no cabeçalho, barra lateral e procurações.</p>
-              </div>
-            </div>
-            <button type="button" onClick={() => logoFileInputRef.current?.click()} className="px-5 py-2.5 rounded-xl btn-gold-3d text-xs font-black flex items-center gap-2 shadow-md flex-shrink-0">
-              <Upload className="w-4 h-4 text-slate-950" />
-              Carregar Imagem / PDF
-            </button>
-          </div>
-        </div>
 
         {/* Profile */}
         <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
