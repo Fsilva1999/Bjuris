@@ -294,6 +294,28 @@ export const LegalProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
   };
 
+  // Verificação automática periódica de prazos a vencer (Notificações Push & Alerta Sonoro)
+  useEffect(() => {
+    if (!perfil.notificacoesAtivas) return;
+
+    const checkDeadlines = () => {
+      const now = new Date().getTime();
+      const next24h = now + 24 * 60 * 60 * 1000;
+
+      prazos.forEach(p => {
+        if (p.concluido || p.notificacaoEnviada) return;
+        const prazoTime = new Date(p.dataHora).getTime();
+        if (!isNaN(prazoTime) && prazoTime <= next24h) {
+          dispararNotificacaoPrazo(p.id);
+        }
+      });
+    };
+
+    checkDeadlines();
+    const interval = setInterval(checkDeadlines, 30000);
+    return () => clearInterval(interval);
+  }, [prazos, perfil.notificacoesAtivas]);
+
   return (
     <LegalContext.Provider value={{
       activeTab,

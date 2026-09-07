@@ -29,6 +29,7 @@ export const Configuracoes: React.FC = () => {
   const [signOutLoading, setSignOutLoading] = useState(false);
 
   const logoFileInputRef = useRef<HTMLInputElement>(null);
+  const fotoFileInputRef = useRef<HTMLInputElement>(null);
 
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
@@ -285,11 +286,41 @@ export const Configuracoes: React.FC = () => {
             </div>
           )}
 
-          <div className="flex items-center gap-4 py-2 border-b border-slate-100">
-            <img src={fotoUrl} alt={nome} className="w-16 h-16 rounded-2xl object-cover border-2 border-[#d4af37] shadow-sm" />
-            <div className="flex-1">
-              <label className="block text-xs font-bold text-slate-700 mb-1">URL da Foto de Perfil</label>
-              <input type="url" value={fotoUrl} onChange={e => setFotoUrl(e.target.value)} className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-900 font-medium focus:border-[#d4af37] focus:outline-none" />
+          <div className="flex flex-col sm:flex-row items-center gap-4 py-3 border-b border-slate-100">
+            <img
+              src={fotoUrl || 'https://ui-avatars.com/api/?name=Advogado&background=b8860b&color=fff&size=128'}
+              alt={nome}
+              className="w-16 h-16 rounded-2xl object-cover border-2 border-[#d4af37] shadow-md flex-shrink-0"
+            />
+            <div className="flex-1 w-full space-y-1 text-center sm:text-left">
+              <label className="block text-xs font-bold text-slate-900">Foto de Perfil do Advogado</label>
+              <p className="text-[11px] text-slate-500">Selecione uma foto da sua galeria de fotos ou arquivos do dispositivo (PNG, JPG).</p>
+              <input
+                type="file"
+                accept="image/*"
+                ref={fotoFileInputRef}
+                onChange={e => {
+                  if (e.target.files && e.target.files[0]) {
+                    const file = e.target.files[0];
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                      if (event.target?.result) {
+                        setFotoUrl(event.target.result as string);
+                      }
+                    };
+                    reader.readAsDataURL(file);
+                  }
+                }}
+                className="hidden"
+              />
+              <button
+                type="button"
+                onClick={() => fotoFileInputRef.current?.click()}
+                className="mt-1 px-4 py-2 rounded-xl btn-gold-3d text-xs font-black inline-flex items-center gap-2 shadow-sm"
+              >
+                <Upload className="w-4 h-4 text-slate-950" />
+                📷 Selecionar Foto do Dispositivo
+              </button>
             </div>
           </div>
 
