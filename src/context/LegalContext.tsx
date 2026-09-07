@@ -6,7 +6,9 @@ import {
   PrazoAudiencia,
   HonorarioFinanceiro,
   AdvogadoPerfil,
-  StatusProcesso
+  StatusProcesso,
+  CarnePagamento,
+  ParcelaCarne
 } from '../types/legal';
 import {
   MOCK_PERFIL,
@@ -42,6 +44,7 @@ interface LegalContextType {
   clientes: Cliente[];
   prazos: PrazoAudiencia[];
   financeiro: HonorarioFinanceiro[];
+  carnes: CarnePagamento[];
   
   // PWA Install State
   canInstallPwa: boolean;
@@ -57,6 +60,8 @@ interface LegalContextType {
   togglePrazoConcluido: (id: string) => void;
   addFinanceiro: (novo: Omit<HonorarioFinanceiro, 'id'>) => void;
   toggleFinanceiroStatus: (id: string) => void;
+  addCarne: (novo: Omit<CarnePagamento, 'id' | 'dataCriacao' | 'parcelas'>) => void;
+  toggleParcelaCarneStatus: (carneId: string, parcelaId: string) => void;
   dispararNotificacaoPrazo: (prazoId: string) => void;
 
   // Modals state
@@ -110,6 +115,11 @@ export const LegalProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     return saved ? JSON.parse(saved) : [];
   });
 
+  const [carnes, setCarnes] = useState<CarnePagamento[]>(() => {
+    const saved = localStorage.getItem('bjuris_carnes');
+    return saved ? JSON.parse(saved) : [];
+  });
+
   // PWA Install state
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
   const [canInstallPwa, setCanInstallPwa] = useState<boolean>(false);
@@ -153,6 +163,10 @@ export const LegalProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   useEffect(() => {
     localStorage.setItem('bjuris_financeiro', JSON.stringify(financeiro));
   }, [financeiro]);
+
+  useEffect(() => {
+    localStorage.setItem('bjuris_carnes', JSON.stringify(carnes));
+  }, [carnes]);
 
   // PWA Install Prompt Listener
   useEffect(() => {
@@ -286,6 +300,65 @@ export const LegalProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }));
   };
 
+  const addCarne = (novo: Omit<CarnePagamento, 'id' | 'dataCriacao' | 'parcelas'>) => {
+    const carneId = `carne-${Date.now()}`;
+    const dataHoje = new Date();
+    const parcelas: ParcelaCarne[] = [];
+
+    for (let i = 1; i <= novo.qtdParcelas; i++) {
+      const dataVenc = new Date(dataHoje.getFullYear(), dataHoje.getMonth() + (i - 1), novo.diaVencimentoMensal);
+      const vencStr = dataVenc.toISOString().split('T')[0];
+      
+      const now = new Date().getTime();
+      const vencTime = dataVenc.getTime();
+      const diffDays = Math.ceil((vencTime - now) / (1000 * 60 * 60 * 24));
+
+      let status: 'pago' | 'proximo' | 'atrasado' | 'pendente' = 'pendente';
+      if (diffDays < 0) status = 'atrasado';
+      else if (diffDays <= 5) status = 'proximo';
+      else status = 'pendente';
+
+      parcelas.push({
+        id: `parc-${carneId}-${i}`,
+        numero: i,
+        valor: novo.valorParcela,
+        vencimento: vencStr,
+        status
+      });
+    }
+
+    const novoCarne: CarnePagamento = {
+      ...novo,
+      id: carneId,
+      dataCriacao: new Date().toISOString().split('T')[0],
+      parcelas
+    };
+
+    setCarnes(prev => [novoCarne, ...prev]);
+  };
+
+  const toggleParcelaCarneStatus = (carneId: string, parcelaId: string) => {
+    setCarnes(prev => prev.map(c => {
+      if (c.id === carneId) {
+        return {
+          ...c,
+          parcelas: c.parcelas.map(p => {
+            if (p.id === parcelaId) {
+              const isPago = p.status === 'pago';
+              return {
+                ...p,
+                status: isPago ? 'pendente' : 'pago',
+                dataPagamento: isPago ? undefined : new Date().toISOString().split('T')[0]
+              };
+            }
+            return p;
+          })
+        };
+      }
+      return c;
+    }));
+  };
+
   const dispararNotificacaoPrazo = (prazoId: string) => {
     const p = prazos.find(x => x.id === prazoId);
     if (p) {
@@ -328,6 +401,7 @@ export const LegalProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       clientes,
       prazos,
       financeiro,
+      carnes,
       canInstallPwa,
       installPwa,
       addProcesso,
@@ -339,6 +413,8 @@ export const LegalProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       togglePrazoConcluido,
       addFinanceiro,
       toggleFinanceiroStatus,
+      addCarne,
+      toggleParcelaCarneStatus,
       dispararNotificacaoPrazo,
       modalState,
       setModalState

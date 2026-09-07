@@ -113,3 +113,27 @@ export interface AdvogadoPerfil {
   somAlerta: boolean;
   vibracao: boolean;
 }
+
+export interface ParcelaCarne {
+  id: string;
+  numero: number;
+  valor: number;
+  vencimento: string; // YYYY-MM-DD
+  status: 'pago' | 'proximo' | 'atrasado' | 'pendente'; // 🟢 verde (pago/em dia), 🟠 laranja (vence em 5 dias), 🔴 vermelho (atrasado)
+  dataPagamento?: string;
+}
+
+export interface CarnePagamento {
+  id: string;
+  clienteId?: string;
+  clienteNome: string;
+  clienteDocumento: string;
+  beneficioOuAcordo: string; // Ex: BPC / LOAS, Honorários Recorrentes
+  valorTotal: number;
+  qtdParcelas: number;
+  valorParcela: number;
+  diaVencimentoMensal: number;
+  dataCriacao: string;
+  parcelas: ParcelaCarne[];
+  observacoes?: string;
+}
