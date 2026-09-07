@@ -24,8 +24,8 @@ export const LISTA_VARAS_MARANHAO = [
   "Vara Única da Comarca de Caxias - MA",
   "1ª Vara do Trabalho de São Luís - MA (TRT16)",
   "2ª Vara do Trabalho de São Luís - MA (TRT16)",
-  "1ª Vara Federal da Seção Judiciária do Maranhão (TRF1)",
-  "2ª Vara Federal de Imperatriz - MA (TRF1)",
+  "1ª Vara Federal da Seção Judiciária (Justiça Federal)",
+  "2ª Vara Federal de Imperatriz - MA (Justiça Federal)",
   "1ª Vara Cível da Comarca de Timon - MA",
   "Vara da Fazenda Pública de São Luís - MA"
 ];
@@ -224,8 +224,8 @@ export const MOCK_PROCESSOS: Processo[] = [
   {
     id: "proc-4",
     numeroCnj: "1009182-44.2023.4.01.3700",
-    tribunal: "TRF1",
-    vara: "1ª Vara Federal da Seção Judiciária do Maranhão (TRF1)",
+    tribunal: "TRF",
+    vara: "1ª Vara Federal da Seção Judiciária (Justiça Federal)",
     classe: "Ação Anulatória de Débito Fiscal",
     area: "Tributário",
     papelCliente: "Autor",

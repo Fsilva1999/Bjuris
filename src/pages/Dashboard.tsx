@@ -51,17 +51,9 @@ export const Dashboard: React.FC = () => {
       
       {/* 🌟 3D GOLD QUICK ACCESS BAR */}
       <div className="space-y-2">
-        <div className="flex items-center justify-between">
-          <h3 className="text-sm font-black font-outfit text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
-            <Sparkles className="w-4 h-4 text-amber-600 animate-pulse" />
-            Acesso Rápido 3D
-          </h3>
-          <span className="text-[11px] font-bold text-amber-800">Previdenciário, TRF1, Cível & Trabalhista</span>
-        </div>
-
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
           
-          {/* Action 1: Previdenciário & TRF1 */}
+          {/* Action 1: Previdenciário */}
           <button
             onClick={() => setActiveTab('previdenciario')}
             className="p-4 rounded-2xl bg-gradient-to-br from-amber-950 via-slate-900 to-slate-950 border border-amber-500/60 hover:border-amber-400 text-white flex flex-col items-center justify-center text-center shadow-lg hover:shadow-2xl hover:scale-[1.03] transition-all group relative overflow-hidden"
@@ -71,7 +63,7 @@ export const Dashboard: React.FC = () => {
               <ShieldCheck className="w-6 h-6" />
             </div>
             <span className="text-xs font-black text-amber-300 group-hover:text-amber-200 transition-colors">Previdenciário</span>
-            <span className="text-[10px] text-amber-400 font-extrabold mt-0.5">Calculadora TRF1</span>
+            <span className="text-[10px] text-amber-400 font-extrabold mt-0.5">Calculadora INSS</span>
           </button>
 
           {/* Action 2: Novo Processo CNJ */}
@@ -84,7 +76,7 @@ export const Dashboard: React.FC = () => {
               <Scale className="w-6 h-6" />
             </div>
             <span className="text-xs font-black text-slate-100 group-hover:text-amber-400 transition-colors">Novo Processo</span>
-            <span className="text-[10px] text-amber-500/80 font-semibold mt-0.5">Cadastrar CNJ/TRF1</span>
+            <span className="text-[10px] text-amber-500/80 font-semibold mt-0.5">Cadastrar CNJ</span>
           </button>
 
           {/* Action 3: Novo Cliente */}
@@ -136,7 +128,7 @@ export const Dashboard: React.FC = () => {
               <FileText className="w-6 h-6" />
             </div>
             <span className="text-xs font-black text-slate-100 group-hover:text-amber-400 transition-colors">Procuração</span>
-            <span className="text-[10px] text-amber-500/80 font-semibold mt-0.5">INSS / TRF1</span>
+            <span className="text-[10px] text-amber-500/80 font-semibold mt-0.5">INSS / Federal</span>
           </button>
 
         </div>
@@ -150,7 +142,7 @@ export const Dashboard: React.FC = () => {
               <AlertTriangle className="w-5 h-5 animate-pulse" />
             </div>
             <div>
-              <span className="text-[11px] font-black text-red-700 uppercase tracking-widest block">Próximo Prazo Fatal CPC/2015</span>
+              <span className="text-[11px] font-black text-red-700 uppercase tracking-widest block">Próximo Prazo em Atenção (CPC/2015)</span>
               <h4 className="text-sm font-bold text-slate-900 mt-0.5">{proximoPrazo.titulo}</h4>
               <p className="text-xs text-slate-600 font-medium mt-0.5">Proc: <strong className="text-amber-800 font-mono">{proximoPrazo.processoNumero}</strong> • {proximoPrazo.clienteNome}</p>
             </div>
@@ -191,7 +183,7 @@ export const Dashboard: React.FC = () => {
           className="p-5 rounded-2xl glass-card bg-white border border-slate-200 cursor-pointer hover:border-amber-500 shadow-sm transition-all hover:scale-[1.01]"
         >
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Prazos Fatais</span>
+            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Prazos em Atenção</span>
             <div className="p-2.5 rounded-xl bg-amber-100 text-amber-800 border border-amber-200">
               <Clock className="w-5 h-5" />
             </div>

@@ -19,9 +19,9 @@ export interface DocumentoCliente {
 
 export interface Processo {
   id: string;
-  numeroCnj: string; // Ex: 0001234-56.2024.4.01.0000 (TRF1)
-  tribunal: string; // Ex: TRF1, TJMA, TRT16, STJ
-  vara: string; // Ex: 1ª Vara Federal da Seção Judiciária do TRF1
+  numeroCnj: string; // Ex: 0001234-56.2024.4.01.0000 (Justiça Federal)
+  tribunal: string; // Ex: TRF, TJMA, TRT16, STJ
+  vara: string; // Ex: 1ª Vara Federal da Seção Judiciária
   classe: string; // Ex: Procedimento do Juizado Especial Cível / Previdenciário
   area: AreaProcesso;
   papelCliente: TipoParte;
@@ -33,9 +33,9 @@ export interface Processo {
   dataDistribuicao: string;
   advogadoResponsavel: string;
   
-  // Previdenciário & TRF1 Specific Fields
+  // Previdenciário Specific Fields
   numeroBeneficioInss?: string; // NB (10 dígitos)
-  tipoCalculoRpvPrecatorio?: 'RPV (< 60 SM)' | 'Precatório Federal TRF1 (> 60 SM)';
+  tipoCalculoRpvPrecatorio?: 'RPV (< 60 SM)' | 'Precatório Federal (> 60 SM)';
   secaoJudiciariaTrf1?: string; // Ex: SJDF, SJMA, SJMG, SJGO, SJBA
   faseProcessualInss?: string; // Ex: Requerimento Administrativo, Perícia JEF, Concessão
 

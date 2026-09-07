@@ -147,7 +147,7 @@ export const Calculadora: React.FC = () => {
           {/* Result Box */}
           <div className="p-6 rounded-2xl bg-gradient-to-br from-slate-900 to-slate-950 text-white shadow-xl flex flex-col justify-between">
             <div>
-              <span className="text-[10px] font-black text-amber-400 uppercase tracking-widest">Resultado do Prazo Fatal</span>
+              <span className="text-[10px] font-black text-amber-400 uppercase tracking-widest">Resultado do Prazo em Atenção</span>
               <h4 className="text-2xl font-black font-outfit text-white mt-2 capitalize">
                 {calcularDataFinalPrazo()}
               </h4>

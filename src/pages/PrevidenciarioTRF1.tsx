@@ -60,12 +60,12 @@ export const PrevidenciarioTRF1: React.FC = () => {
   const valorBrutoAtrasados = mesesAtrasados * valorBeneficioEstimado;
   const isRpv = valorBrutoAtrasados <= limiteRpvSm;
 
-  const processosPrevidenciarios = processos.filter(p => p.area === 'Previdenciário' || p.tribunal === 'TRF1');
+  const processosPrevidenciarios = processos.filter(p => p.area === 'Previdenciário');
 
   return (
     <div className="space-y-6 animate-in fade-in duration-300 w-full">
       
-      {/* Header Banner Focus: Direito Previdenciário & TRF1 */}
+      {/* Header Banner Focus: Direito Previdenciário */}
       <div className="p-6 rounded-2xl bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950 border border-amber-500/40 shadow-2xl text-white relative overflow-hidden">
         <div className="absolute top-0 right-0 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
         
@@ -74,7 +74,7 @@ export const PrevidenciarioTRF1: React.FC = () => {
             <div className="flex items-center gap-2">
               <span className="px-3 py-1 rounded-full bg-amber-500/20 text-[#d4af37] font-black text-xs border border-amber-500/40 uppercase tracking-widest flex items-center gap-1.5">
                 <ShieldCheck className="w-4 h-4 text-amber-400" />
-                Módulo Especializado Previdenciário & TRF1
+                Módulo Especializado Previdenciário
               </span>
               <span className="px-3 py-1 rounded-full bg-blue-500/20 text-blue-300 font-bold text-xs border border-blue-500/40 uppercase">
                 Cível & Trabalhista
@@ -82,11 +82,11 @@ export const PrevidenciarioTRF1: React.FC = () => {
             </div>
 
             <h1 className="text-2xl sm:text-3xl font-black font-outfit text-slate-100 tracking-wide">
-              Gestão Previdenciária & Jurisdição TRF1
+              Gestão Previdenciária & Jurisdição
             </h1>
 
             <p className="text-xs sm:text-sm text-slate-300 max-w-3xl leading-relaxed">
-              Sistema otimizado para <strong className="text-amber-400 font-bold">Ações de BPC/LOAS</strong>, Concessões de Aposentadoria (Urbana e Rural / Segurado Especial), Benefícios por Incapacidade INSS e Requisições de Pagamento (<strong className="text-amber-300">RPV & Precatórios Federais no TRF1</strong>).
+              Sistema otimizado para <strong className="text-amber-400 font-bold">Ações de BPC/LOAS</strong>, Concessões de Aposentadoria (Urbana e Rural / Segurado Especial), Benefícios por Incapacidade INSS e Requisições de Pagamento (<strong className="text-amber-300">RPV & Precatórios Federais</strong>).
             </p>
           </div>
 
@@ -96,7 +96,7 @@ export const PrevidenciarioTRF1: React.FC = () => {
               className="w-full sm:w-auto px-5 py-3 rounded-xl btn-gold-3d text-xs font-black transition-all shadow-lg flex items-center justify-center gap-2"
             >
               <Plus className="w-4 h-4 text-slate-950" />
-              Novo Processo TRF1 / INSS
+              Novo Processo Federal / INSS
             </button>
           </div>
         </div>
@@ -113,7 +113,7 @@ export const PrevidenciarioTRF1: React.FC = () => {
           }`}
         >
           <Calculator className="w-4 h-4" />
-          🧮 Calculadora de Benefícios & RPV TRF1
+          🧮 Calculadora de Benefícios & RPV
         </button>
 
         <button
@@ -125,7 +125,7 @@ export const PrevidenciarioTRF1: React.FC = () => {
           }`}
         >
           <Building className="w-4 h-4 text-blue-600" />
-          🏛️ Seções Judiciárias do TRF1
+          🏛️ Seções Judiciárias
         </button>
 
         <button
@@ -238,11 +238,11 @@ export const PrevidenciarioTRF1: React.FC = () => {
                 </div>
               )}
 
-              {/* Inputs for Liquidação Atrasados & RPV TRF1 */}
+              {/* Inputs for Liquidação Atrasados & RPV */}
               <div className="p-4 rounded-xl bg-slate-900 text-white space-y-4 shadow-inner">
                 <h4 className="text-xs font-black text-amber-400 uppercase tracking-wider flex items-center gap-1.5">
                   <TrendingUp className="w-4 h-4 text-amber-400" />
-                  Estimativa de Retroativos (DER até Concessão JEF / TRF1)
+                  Estimativa de Retroativos (DER até Concessão JEF / Justiça Federal)
                 </h4>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -290,7 +290,7 @@ export const PrevidenciarioTRF1: React.FC = () => {
                     <p className="text-xs mt-1 font-medium">
                       {atendeCriterioRendaBpc
                         ? '✅ Atende ao critério objetivo de 1/4 do salário mínimo (R$ 379,50).'
-                        : '⚠️ Excede 1/4 do SM. Requer comprovação de vulnerabilidade social / gastos médicos no JEF TRF1.'}
+                        : '⚠️ Excede 1/4 do SM. Requer comprovação de vulnerabilidade social / gastos médicos no JEF.'}
                     </p>
                   </div>
                 )}
@@ -310,9 +310,9 @@ export const PrevidenciarioTRF1: React.FC = () => {
                     ? 'bg-emerald-500/10 border-emerald-500/40 text-emerald-300'
                     : 'bg-purple-500/10 border-purple-500/40 text-purple-300'
                 }`}>
-                  <span className="text-[10px] font-black uppercase tracking-widest block">Forma de Pagamento Federal (TRF1)</span>
+                  <span className="text-[10px] font-black uppercase tracking-widest block">Forma de Pagamento Federal</span>
                   <h4 className="text-base font-black uppercase font-outfit">
-                    {isRpv ? '⚡ RPV — Requisição de Pequeno Valor (TRF1)' : '📜 Precatório Federal (TRF1)'}
+                    {isRpv ? '⚡ RPV — Requisição de Pequeno Valor' : '📜 Precatório Federal'}
                   </h4>
                   <p className="text-xs font-medium">
                     {isRpv
@@ -328,14 +328,14 @@ export const PrevidenciarioTRF1: React.FC = () => {
         </div>
       )}
 
-      {/* ─── SUB TAB 2: SEÇÕES JUDICIÁRIAS DO TRF1 ──────────────────────────────────── */}
+      {/* ─── SUB TAB 2: SEÇÕES JUDICIÁRIAS FEDERAIS ──────────────────────────────────── */}
       {activeSubTab === 'subsecoes' && (
         <div className="space-y-4">
           <div className="p-4 rounded-2xl glass-panel bg-white border border-slate-200 shadow-sm flex items-center justify-between">
             <div>
               <h3 className="text-base font-black text-slate-900 flex items-center gap-2">
                 <Building className="w-5 h-5 text-blue-600" />
-                Jurisdição do Tribunal Regional Federal da 1ª Região (TRF1)
+                Jurisdição da Justiça Federal
               </h3>
               <p className="text-xs text-slate-600 font-medium mt-0.5">
                 Seções e Subseções Judiciárias com competência delegada ou federal previdenciária
@@ -351,7 +351,7 @@ export const PrevidenciarioTRF1: React.FC = () => {
               >
                 <div>
                   <span className="px-2.5 py-0.5 rounded bg-blue-100 text-blue-900 font-black text-[10px] uppercase border border-blue-200">
-                    TRF1 — Seção {sub.uf}
+                    Justiça Federal — Seção {sub.uf}
                   </span>
                   <h4 className="text-sm font-extrabold text-slate-900 mt-2">{sub.nome}</h4>
                 </div>
@@ -364,7 +364,7 @@ export const PrevidenciarioTRF1: React.FC = () => {
                     rel="noreferrer"
                     className="text-xs font-black text-amber-700 hover:underline flex items-center gap-1"
                   >
-                    Acessar PJe TRF1 <ExternalLink className="w-3.5 h-3.5" />
+                    Acessar PJe Federal <ExternalLink className="w-3.5 h-3.5" />
                   </a>
                 </div>
               </div>
@@ -431,7 +431,7 @@ export const PrevidenciarioTRF1: React.FC = () => {
                       onClick={() => setModalState(prev => ({ ...prev, procuracao: true, clienteParaProcuracao: cli }))}
                       className="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-900 font-black text-xs border border-slate-300"
                     >
-                      📄 Emissão Procuração INSS / TRF1
+                      📄 Emissão Procuração INSS / Federal
                     </button>
                   </div>
                 </div>

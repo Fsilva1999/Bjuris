@@ -168,7 +168,7 @@ export const Processos: React.FC = () => {
             <option value="todos">Todos os Tribunais</option>
             <option value="TJMA">TJMA (Estadual)</option>
             <option value="TRT16">TRT16 (Trabalhista)</option>
-            <option value="TRF1">TRF1 (Federal)</option>
+            <option value="TRF1">TRF (Federal)</option>
             <option value="TJSP">TJSP</option>
             <option value="TJRJ">TJRJ</option>
           </select>

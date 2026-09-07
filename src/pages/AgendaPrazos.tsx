@@ -28,7 +28,7 @@ export const AgendaPrazos: React.FC = () => {
   const getTipoBadge = (tipo: TipoPrazo) => {
     switch (tipo) {
       case 'prazo_fatal':
-        return <span className="px-3 py-1 rounded bg-red-100 text-red-900 font-black text-xs border border-red-300 uppercase">Prazo Fatal CPC</span>;
+        return <span className="px-3 py-1 rounded bg-red-100 text-red-900 font-black text-xs border border-red-300 uppercase">Prazo em Atenção</span>;
       case 'audiencia_online':
         return <span className="px-3 py-1 rounded bg-blue-100 text-blue-900 font-black text-xs border border-blue-300 uppercase">Audiência Telepresencial</span>;
       case 'audiencia_presencial':
@@ -57,7 +57,7 @@ export const AgendaPrazos: React.FC = () => {
         <div>
           <h2 className="text-2xl font-black font-outfit text-slate-900 flex items-center gap-2">
             <Calendar className="w-7 h-7 text-[#b8860b]" />
-            Agenda de Prazos Fatais & Audiências
+            Agenda de Prazos em Atenção & Audiências
           </h2>
           <p className="text-xs text-slate-700 font-bold mt-1">
             Controle de intimações judiciais, prazos em dias úteis CPC/2015 e alertas com som
@@ -90,7 +90,7 @@ export const AgendaPrazos: React.FC = () => {
               filterTipo === 'prazo_fatal' ? 'btn-gold-3d shadow-sm' : 'bg-slate-100 text-slate-900 hover:bg-slate-200 border border-slate-300'
             }`}
           >
-            Prazos Fatais
+            Prazos em Atenção
           </button>
           <button
             onClick={() => setFilterTipo('audiencia_online')}

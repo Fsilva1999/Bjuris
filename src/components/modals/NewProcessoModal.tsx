@@ -8,8 +8,8 @@ export const NewProcessoModal: React.FC = () => {
   const { modalState, setModalState, clientes, addProcesso, perfil } = useLegal();
 
   const [numeroCnj, setNumeroCnj] = useState('');
-  const [tribunal, setTribunal] = useState('TRF1');
-  const [vara, setVara] = useState('1ª Vara Federal da Seção Judiciária (TRF1 / JEF)');
+  const [tribunal, setTribunal] = useState('TRF');
+  const [vara, setVara] = useState('1ª Vara Federal da Seção Judiciária (Justiça Federal / JEF)');
   const [varaCustom, setVaraCustom] = useState('');
   const [classe, setClasse] = useState('Procedimento do Juizado Especial Cível / Previdenciário');
   const [area, setArea] = useState<AreaProcesso>('Previdenciário');
@@ -94,7 +94,7 @@ export const NewProcessoModal: React.FC = () => {
                 onChange={e => setTribunal(e.target.value)}
                 className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5 text-xs text-slate-900 font-bold focus:border-[#d4af37] focus:bg-white focus:outline-none"
               >
-                <option value="TRF1" className="text-slate-900 font-black">TRF1 — Justiça Federal & JEF</option>
+                <option value="TRF" className="text-slate-900 font-black">Justiça Federal & JEF</option>
                 <option value="TJMA" className="text-slate-900 font-bold">TJMA (Estadual)</option>
                 <option value="TRT16" className="text-slate-900 font-bold">TRT16 (Trabalhista)</option>
                 <option value="TJSP" className="text-slate-900 font-bold">TJSP (São Paulo)</option>
