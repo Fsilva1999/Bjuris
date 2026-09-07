@@ -310,17 +310,21 @@ export const Dashboard: React.FC = () => {
 
           {/* Timeline of Movimentações */}
           <div className="glass-panel bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-            <h4 className="text-xs font-bold text-slate-900 mb-3 uppercase tracking-wider">Últimas Intimações DJe / PJe Maranhão</h4>
+            <h4 className="text-xs font-bold text-slate-900 mb-3 uppercase tracking-wider">Últimas Intimações DJe / PJe</h4>
             <div className="space-y-3">
-              {processos[0]?.movimentacoes.map(m => (
-                <div key={m.id} className="text-xs border-l-2 border-amber-500 pl-3 py-1">
-                  <div className="flex items-center justify-between">
-                    <span className="font-bold text-slate-900">{m.titulo}</span>
-                    <span className="text-[10px] text-amber-800 font-mono font-bold">{m.data}</span>
+              {processos.length === 0 || !(processos[0]?.movimentacoes) ? (
+                <p className="text-xs text-slate-500 font-medium">Nenhuma intimação recente. Cadastre um processo para acompanhar.</p>
+              ) : (
+                processos[0].movimentacoes.map(m => (
+                  <div key={m.id} className="text-xs border-l-2 border-amber-500 pl-3 py-1">
+                    <div className="flex items-center justify-between">
+                      <span className="font-bold text-slate-900">{m.titulo}</span>
+                      <span className="text-[10px] text-amber-800 font-mono font-bold">{m.data}</span>
+                    </div>
+                    <p className="text-xs text-slate-600 mt-1 leading-snug">{m.descricao}</p>
                   </div>
-                  <p className="text-xs text-slate-600 mt-1 leading-snug">{m.descricao}</p>
-                </div>
-              ))}
+                ))
+              )}
             </div>
           </div>
 
