@@ -1,11 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY as string;
-
-if (!supabaseUrl || !supabaseAnonKey) {
-  console.error('⚠️ BJuris: Variáveis de ambiente do Supabase não configuradas.');
-}
+const supabaseUrl = (import.meta.env.VITE_SUPABASE_URL as string) || 'https://qqqbjtbpxfggjuzlzqpc.supabase.co';
+const supabaseAnonKey = (import.meta.env.VITE_SUPABASE_ANON_KEY as string) || 'sb_publishable_NmkmG-UEMovm5s0kDLr3nw_7ZWAV8Zh';
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
