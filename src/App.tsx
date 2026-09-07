@@ -22,18 +22,24 @@ import { Configuracoes } from './pages/Configuracoes';
 import { LoginPage } from './pages/auth/LoginPage';
 import { RegisterPage } from './pages/auth/RegisterPage';
 
-// Loading screen
+// Loading screen (Dark theme matching index.html bg-slate-950)
 const LoadingScreen: React.FC = () => (
-  <div className="min-h-screen bg-white flex items-center justify-center">
-    <div className="text-center space-y-4">
-      <div className="w-16 h-16 rounded-2xl bg-slate-950 flex items-center justify-center mx-auto shadow-xl relative">
-        <img src="/logo-bjuris.png" alt="BJuris" className="w-10 h-10 object-contain" />
-        <div className="absolute -inset-1 rounded-[14px] border-2 border-[#d4af37]/40" />
+  <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col items-center justify-center p-4">
+    <div className="text-center space-y-5">
+      <div className="w-20 h-20 rounded-2xl bg-slate-900 border border-amber-500/40 flex items-center justify-center mx-auto shadow-2xl relative">
+        <span className="text-3xl font-black text-[#d4af37]">⚖️</span>
+        <div className="absolute -inset-1 rounded-[18px] border border-[#d4af37]/30 animate-pulse" />
       </div>
-      <div className="flex items-center gap-2 justify-center">
-        <div className="w-2 h-2 rounded-full bg-[#d4af37] animate-bounce" style={{ animationDelay: '0ms' }} />
-        <div className="w-2 h-2 rounded-full bg-[#d4af37] animate-bounce" style={{ animationDelay: '150ms' }} />
-        <div className="w-2 h-2 rounded-full bg-[#d4af37] animate-bounce" style={{ animationDelay: '300ms' }} />
+
+      <div>
+        <h2 className="text-lg font-black font-outfit text-slate-100 tracking-wider">BJuris</h2>
+        <p className="text-xs text-amber-500/90 font-medium mt-0.5">Gestão Advocatícia & Processual</p>
+      </div>
+
+      <div className="flex items-center gap-2 justify-center pt-2">
+        <div className="w-2.5 h-2.5 rounded-full bg-[#d4af37] animate-bounce" style={{ animationDelay: '0ms' }} />
+        <div className="w-2.5 h-2.5 rounded-full bg-[#d4af37] animate-bounce" style={{ animationDelay: '150ms' }} />
+        <div className="w-2.5 h-2.5 rounded-full bg-[#d4af37] animate-bounce" style={{ animationDelay: '300ms' }} />
       </div>
     </div>
   </div>

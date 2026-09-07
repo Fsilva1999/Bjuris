@@ -22,35 +22,38 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     let isMounted = true;
 
-    // Safety timeout: force loading to false after 2s if Supabase does not respond
+    // Fast safety timeout: force loading to false after 800ms
     const timer = setTimeout(() => {
       if (isMounted) setLoading(false);
-    }, 2000);
+    }, 800);
 
-    // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (!isMounted) return;
-      setSession(session);
-      setUser(session?.user ?? null);
-      setLoading(false);
-    }).catch(err => {
-      console.warn('Supabase session load warn:', err);
+    try {
+      supabase.auth.getSession().then(({ data: { session } }) => {
+        if (!isMounted) return;
+        setSession(session);
+        setUser(session?.user ?? null);
+        setLoading(false);
+      }).catch(err => {
+        console.warn('Supabase getSession warn:', err);
+        if (isMounted) setLoading(false);
+      });
+
+      const { data } = supabase.auth.onAuthStateChange((_event, session) => {
+        if (!isMounted) return;
+        setSession(session);
+        setUser(session?.user ?? null);
+        setLoading(false);
+      });
+
+      return () => {
+        isMounted = false;
+        clearTimeout(timer);
+        data?.subscription?.unsubscribe();
+      };
+    } catch (err) {
+      console.warn('Supabase auth init error:', err);
       if (isMounted) setLoading(false);
-    });
-
-    // Listen for auth state changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (!isMounted) return;
-      setSession(session);
-      setUser(session?.user ?? null);
-      setLoading(false);
-    });
-
-    return () => {
-      isMounted = false;
-      clearTimeout(timer);
-      subscription.unsubscribe();
-    };
+    }
   }, []);
 
   const signIn = async (emailOrPhone: string, password: string): Promise<{ error: string | null }> => {
