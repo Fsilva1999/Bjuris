@@ -15,7 +15,8 @@ import {
   Calendar,
   ExternalLink,
   MapPin,
-  BookOpen
+  BookOpen,
+  Sparkles
 } from 'lucide-react';
 import { triggerDeadlineAlert } from '../utils/pwaNotifications';
 
@@ -47,45 +48,83 @@ export const Dashboard: React.FC = () => {
   return (
     <div className="space-y-6 animate-in fade-in duration-300 w-full">
       
-      {/* Welcome Banner */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-slate-900 via-slate-800 to-slate-950 p-6 border border-slate-800 shadow-xl text-white">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 relative z-10">
-          <div className="flex items-center gap-4">
-            <img
-              src={perfil.fotoUrl}
-              alt={perfil.nome}
-              className="w-16 h-16 rounded-2xl object-cover border-2 border-amber-500 shadow-lg"
-            />
-            <div>
-              <div className="flex flex-wrap items-center gap-2">
-                <h2 className="text-2xl font-black font-outfit text-white tracking-wide">{perfil.nome}</h2>
-                <span className="px-2.5 py-0.5 rounded-full bg-amber-500 text-slate-950 font-black font-mono text-xs shadow">
-                  OAB/{perfil.oabUf} {perfil.oabNumero}
-                </span>
-              </div>
-              <p className="text-xs font-medium text-slate-300 mt-1 flex items-center gap-1.5">
-                <MapPin className="w-3.5 h-3.5 text-amber-400" />
-                {perfil.escritorio} • <strong className="text-amber-400">{processosAtivos.length} processos ativos</strong>
-              </p>
-            </div>
-          </div>
+      {/* 🌟 3D GOLD QUICK ACCESS BAR (Passeio no Topo com 5 Ações Principais) */}
+      <div className="space-y-2">
+        <div className="flex items-center justify-between">
+          <h3 className="text-sm font-black font-outfit text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
+            <Sparkles className="w-4 h-4 text-amber-600 animate-pulse" />
+            Acesso Rápido 3D
+          </h3>
+          <span className="text-[11px] font-bold text-amber-800">Principais Ferramentas</span>
+        </div>
 
-          <div className="flex items-center gap-3 w-full sm:w-auto">
-            <button
-              onClick={() => setModalState(prev => ({ ...prev, novoProcesso: true }))}
-              className="flex-1 sm:flex-initial px-5 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 text-white font-black text-xs hover:brightness-110 transition-all flex items-center justify-center gap-2 shadow-md"
-            >
-              <Plus className="w-4 h-4" />
-              Novo Processo CNJ
-            </button>
-            <button
-              onClick={() => setModalState(prev => ({ ...prev, procuracao: true }))}
-              className="flex-1 sm:flex-initial px-5 py-2.5 rounded-xl bg-slate-800 text-white border border-slate-700 hover:bg-slate-700 text-xs font-bold transition-all flex items-center justify-center gap-2 shadow"
-            >
-              <FileText className="w-4 h-4 text-amber-400" />
-              Procuração
-            </button>
-          </div>
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
+          
+          {/* Action 1: Novo Processo CNJ */}
+          <button
+            onClick={() => setModalState(prev => ({ ...prev, novoProcesso: true }))}
+            className="p-4 rounded-2xl bg-gradient-to-br from-slate-900 via-slate-800 to-slate-950 border border-amber-500/40 hover:border-amber-400 text-white flex flex-col items-center justify-center text-center shadow-lg hover:shadow-2xl hover:scale-[1.03] transition-all group relative overflow-hidden"
+          >
+            <div className="absolute inset-0 bg-gradient-to-tr from-amber-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+            <div className="p-3 rounded-2xl bg-amber-500/20 text-[#d4af37] border border-amber-500/40 mb-2 group-hover:scale-110 transition-transform shadow-md">
+              <Scale className="w-6 h-6" />
+            </div>
+            <span className="text-xs font-black text-slate-100 group-hover:text-amber-400 transition-colors">Novo Processo</span>
+            <span className="text-[10px] text-amber-500/80 font-semibold mt-0.5">Cadastrar CNJ</span>
+          </button>
+
+          {/* Action 2: Novo Cliente */}
+          <button
+            onClick={() => setModalState(prev => ({ ...prev, novoCliente: true }))}
+            className="p-4 rounded-2xl bg-gradient-to-br from-slate-900 via-slate-800 to-slate-950 border border-amber-500/40 hover:border-amber-400 text-white flex flex-col items-center justify-center text-center shadow-lg hover:shadow-2xl hover:scale-[1.03] transition-all group relative overflow-hidden"
+          >
+            <div className="absolute inset-0 bg-gradient-to-tr from-amber-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+            <div className="p-3 rounded-2xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 mb-2 group-hover:scale-110 transition-transform shadow-md">
+              <Users className="w-6 h-6" />
+            </div>
+            <span className="text-xs font-black text-slate-100 group-hover:text-emerald-400 transition-colors">Novo Cliente</span>
+            <span className="text-[10px] text-emerald-400/80 font-semibold mt-0.5">CRM PF / PJ</span>
+          </button>
+
+          {/* Action 3: Agendar Prazo */}
+          <button
+            onClick={() => setModalState(prev => ({ ...prev, novoPrazo: true }))}
+            className="p-4 rounded-2xl bg-gradient-to-br from-slate-900 via-slate-800 to-slate-950 border border-amber-500/40 hover:border-amber-400 text-white flex flex-col items-center justify-center text-center shadow-lg hover:shadow-2xl hover:scale-[1.03] transition-all group relative overflow-hidden"
+          >
+            <div className="absolute inset-0 bg-gradient-to-tr from-amber-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+            <div className="p-3 rounded-2xl bg-amber-500/20 text-[#d4af37] border border-amber-500/40 mb-2 group-hover:scale-110 transition-transform shadow-md">
+              <Clock className="w-6 h-6" />
+            </div>
+            <span className="text-xs font-black text-slate-100 group-hover:text-amber-400 transition-colors">Agendar Prazo</span>
+            <span className="text-[10px] text-amber-500/80 font-semibold mt-0.5">Prazo & Audiência</span>
+          </button>
+
+          {/* Action 4: Calculadora CPC */}
+          <button
+            onClick={() => setActiveTab('calculadora')}
+            className="p-4 rounded-2xl bg-gradient-to-br from-slate-900 via-slate-800 to-slate-950 border border-amber-500/40 hover:border-amber-400 text-white flex flex-col items-center justify-center text-center shadow-lg hover:shadow-2xl hover:scale-[1.03] transition-all group relative overflow-hidden"
+          >
+            <div className="absolute inset-0 bg-gradient-to-tr from-amber-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+            <div className="p-3 rounded-2xl bg-purple-500/20 text-purple-400 border border-purple-500/40 mb-2 group-hover:scale-110 transition-transform shadow-md">
+              <Calculator className="w-6 h-6" />
+            </div>
+            <span className="text-xs font-black text-slate-100 group-hover:text-purple-400 transition-colors">Calculadora CPC</span>
+            <span className="text-[10px] text-purple-400/80 font-semibold mt-0.5">Contagem Úteis</span>
+          </button>
+
+          {/* Action 5: Procuração Ad Judicia */}
+          <button
+            onClick={() => setModalState(prev => ({ ...prev, procuracao: true }))}
+            className="p-4 rounded-2xl bg-gradient-to-br from-slate-900 via-slate-800 to-slate-950 border border-amber-500/40 hover:border-amber-400 text-white flex flex-col items-center justify-center text-center shadow-lg hover:shadow-2xl hover:scale-[1.03] transition-all group relative overflow-hidden col-span-2 sm:col-span-1"
+          >
+            <div className="absolute inset-0 bg-gradient-to-tr from-amber-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+            <div className="p-3 rounded-2xl bg-amber-500/20 text-[#d4af37] border border-amber-500/40 mb-2 group-hover:scale-110 transition-transform shadow-md">
+              <FileText className="w-6 h-6" />
+            </div>
+            <span className="text-xs font-black text-slate-100 group-hover:text-amber-400 transition-colors">Procuração</span>
+            <span className="text-[10px] text-amber-500/80 font-semibold mt-0.5">Gerar Ad Judicia</span>
+          </button>
+
         </div>
       </div>
 
@@ -112,13 +151,13 @@ export const Dashboard: React.FC = () => {
         </div>
       )}
 
-      {/* 4 Stat Cards - Pure White High Contrast */}
+      {/* 4 Stat Cards - High Contrast */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         
         {/* Card 1 */}
         <div
           onClick={() => setActiveTab('processos')}
-          className="p-5 rounded-2xl glass-card bg-white border border-slate-200 cursor-pointer hover:border-amber-500 shadow-sm"
+          className="p-5 rounded-2xl glass-card bg-white border border-slate-200 cursor-pointer hover:border-amber-500 shadow-sm transition-all hover:scale-[1.01]"
         >
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Processos Ativos</span>
@@ -135,7 +174,7 @@ export const Dashboard: React.FC = () => {
         {/* Card 2 */}
         <div
           onClick={() => setActiveTab('agenda')}
-          className="p-5 rounded-2xl glass-card bg-white border border-slate-200 cursor-pointer hover:border-amber-500 shadow-sm"
+          className="p-5 rounded-2xl glass-card bg-white border border-slate-200 cursor-pointer hover:border-amber-500 shadow-sm transition-all hover:scale-[1.01]"
         >
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Prazos Fatais</span>
@@ -152,7 +191,7 @@ export const Dashboard: React.FC = () => {
         {/* Card 3 */}
         <div
           onClick={() => setActiveTab('clientes')}
-          className="p-5 rounded-2xl glass-card bg-white border border-slate-200 cursor-pointer hover:border-amber-500 shadow-sm"
+          className="p-5 rounded-2xl glass-card bg-white border border-slate-200 cursor-pointer hover:border-amber-500 shadow-sm transition-all hover:scale-[1.01]"
         >
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Carteira Clientes</span>
@@ -162,14 +201,14 @@ export const Dashboard: React.FC = () => {
           </div>
           <p className="text-3xl font-black font-outfit text-slate-900 mt-3">{clientes.length}</p>
           <p className="text-xs text-slate-600 font-medium mt-1">
-            PF & PJ no Maranhão e Brasil
+            PF & PJ Cadastrados
           </p>
         </div>
 
         {/* Card 4 */}
         <div
           onClick={() => setActiveTab('financeiro')}
-          className="p-5 rounded-2xl glass-card bg-white border border-slate-200 cursor-pointer hover:border-amber-500 shadow-sm"
+          className="p-5 rounded-2xl glass-card bg-white border border-slate-200 cursor-pointer hover:border-amber-500 shadow-sm transition-all hover:scale-[1.01]"
         >
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Honorários Mês</span>
@@ -187,7 +226,7 @@ export const Dashboard: React.FC = () => {
 
       </div>
 
-      {/* Main Grid Section */}
+      {/* Main Section: Agenda & Intimações */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
         {/* Left Column (2 cols): Prazos & Audiências */}
@@ -270,43 +309,9 @@ export const Dashboard: React.FC = () => {
           </div>
         </div>
 
-        {/* Right Column (1 col): Ações Rápidas & Intimações */}
+        {/* Right Column (1 col): Intimações */}
         <div className="space-y-4">
-          <h3 className="text-lg font-black text-slate-900">Acesso Rápido</h3>
-
-          <div className="grid grid-cols-2 gap-3">
-            <button
-              onClick={() => setModalState(prev => ({ ...prev, novoCliente: true }))}
-              className="p-3.5 rounded-2xl glass-card bg-white border border-slate-200 flex flex-col items-center justify-center text-center hover:border-amber-500 shadow-sm"
-            >
-              <Users className="w-6 h-6 text-emerald-600 mb-1" />
-              <span className="text-xs font-bold text-slate-900">Novo Cliente</span>
-            </button>
-
-            <button
-              onClick={() => setModalState(prev => ({ ...prev, novoPrazo: true }))}
-              className="p-3.5 rounded-2xl glass-card bg-white border border-slate-200 flex flex-col items-center justify-center text-center hover:border-amber-500 shadow-sm"
-            >
-              <Clock className="w-6 h-6 text-amber-600 mb-1" />
-              <span className="text-xs font-bold text-slate-900">Agendar Prazo</span>
-            </button>
-
-            <button
-              onClick={() => setActiveTab('calculadora')}
-              className="p-3.5 rounded-2xl glass-card bg-white border border-slate-200 flex flex-col items-center justify-center text-center hover:border-amber-500 shadow-sm"
-            >
-              <Calculator className="w-6 h-6 text-purple-600 mb-1" />
-              <span className="text-xs font-bold text-slate-900">Calculadora CPC</span>
-            </button>
-
-            <button
-              onClick={() => setModalState(prev => ({ ...prev, procuracao: true }))}
-              className="p-3.5 rounded-2xl glass-card bg-white border border-slate-200 flex flex-col items-center justify-center text-center hover:border-amber-500 shadow-sm"
-            >
-              <FileText className="w-6 h-6 text-amber-600 mb-1" />
-              <span className="text-xs font-bold text-slate-900">Procuração</span>
-            </button>
-          </div>
+          <h3 className="text-lg font-black text-slate-900">Últimas Intimações</h3>
 
           {/* Timeline of Movimentações */}
           <div className="glass-panel bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
