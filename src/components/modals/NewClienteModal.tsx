@@ -20,6 +20,11 @@ export const NewClienteModal: React.FC = () => {
   const [endereco, setEndereco] = useState('');
   const [observacoes, setObservacoes] = useState('');
 
+  // Previdenciário specific state
+  const [numeroBeneficioINSS, setNumeroBeneficioINSS] = useState('');
+  const [nitPisPasep, setNitPisPasep] = useState('');
+  const [categoriaSegurado, setCategoriaSegurado] = useState<'Segurado Urbano' | 'Segurado Especial (Rural/Pescador)' | 'BPC/LOAS Idoso' | 'BPC/LOAS Deficiência' | 'Dependente / Pensão'>('Segurado Urbano');
+
   if (!modalState.novoCliente) return null;
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -42,7 +47,10 @@ export const NewClienteModal: React.FC = () => {
       estadoCivil,
       nacionalidade,
       endereco,
-      observacoes
+      observacoes,
+      numeroBeneficioINSS,
+      nitPisPasep,
+      categoriaSegurado
     });
 
     setModalState(prev => ({ ...prev, novoCliente: false }));
@@ -223,6 +231,54 @@ export const NewClienteModal: React.FC = () => {
               className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5 text-xs text-slate-900 font-bold placeholder-slate-400 focus:border-[#d4af37] focus:bg-white focus:outline-none"
             />
           </div>
+
+          {/* Previdenciário Specific Form Block */}
+          {tipo === 'PF' && (
+            <div className="p-4 rounded-xl bg-amber-50 border border-amber-300 space-y-3">
+              <span className="text-xs font-black text-amber-900 uppercase tracking-wider block">
+                🛡️ Dados Previdenciários & Benefício INSS (Opcional)
+              </span>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div>
+                  <label className="block text-xs font-bold text-slate-800 mb-1">Nº do Benefício (NB INSS)</label>
+                  <input
+                    type="text"
+                    placeholder="000.000.000-0"
+                    value={numeroBeneficioINSS}
+                    onChange={e => setNumeroBeneficioINSS(e.target.value)}
+                    className="w-full bg-white border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-900 font-mono font-bold focus:border-amber-500 focus:outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-slate-800 mb-1">NIT / PIS / PASEP</label>
+                  <input
+                    type="text"
+                    placeholder="000.00000.00-0"
+                    value={nitPisPasep}
+                    onChange={e => setNitPisPasep(e.target.value)}
+                    className="w-full bg-white border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-900 font-mono font-bold focus:border-amber-500 focus:outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-slate-800 mb-1">Categoria do Segurado</label>
+                  <select
+                    value={categoriaSegurado}
+                    onChange={e => setCategoriaSegurado(e.target.value as any)}
+                    className="w-full bg-white border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-900 font-bold focus:border-amber-500 focus:outline-none"
+                  >
+                    <option value="Segurado Urbano">Segurado Urbano</option>
+                    <option value="Segurado Especial (Rural/Pescador)">Segurado Especial (Rural/Pescador)</option>
+                    <option value="BPC/LOAS Idoso">BPC/LOAS Idoso</option>
+                    <option value="BPC/LOAS Deficiência">BPC/LOAS Deficiência</option>
+                    <option value="Dependente / Pensão">Dependente / Pensão</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          )}
 
           <div className="pt-4 border-t border-slate-100 flex justify-end gap-3">
             <button

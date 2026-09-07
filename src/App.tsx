@@ -13,6 +13,7 @@ import { NewPrazoModal } from './components/modals/NewPrazoModal';
 import { ProcuracaoModal } from './components/modals/ProcuracaoModal';
 
 import { Dashboard } from './pages/Dashboard';
+import { PrevidenciarioTRF1 } from './pages/PrevidenciarioTRF1';
 import { Processos } from './pages/Processos';
 import { Clientes } from './pages/Clientes';
 import { AgendaPrazos } from './pages/AgendaPrazos';
@@ -70,6 +71,8 @@ const MainContent: React.FC = () => {
     switch (activeTab) {
       case 'dashboard':
         return <Dashboard />;
+      case 'previdenciario':
+        return <PrevidenciarioTRF1 />;
       case 'processos':
         return <Processos />;
       case 'clientes':

@@ -8,14 +8,14 @@ export const NewProcessoModal: React.FC = () => {
   const { modalState, setModalState, clientes, addProcesso, perfil } = useLegal();
 
   const [numeroCnj, setNumeroCnj] = useState('');
-  const [tribunal, setTribunal] = useState('TJMA');
-  const [vara, setVara] = useState(LISTA_VARAS_MARANHAO[0]);
+  const [tribunal, setTribunal] = useState('TRF1');
+  const [vara, setVara] = useState('1ª Vara Federal da Seção Judiciária (TRF1 / JEF)');
   const [varaCustom, setVaraCustom] = useState('');
-  const [classe, setClasse] = useState('Procedimento Comum Cível');
-  const [area, setArea] = useState<AreaProcesso>('Cível');
+  const [classe, setClasse] = useState('Procedimento do Juizado Especial Cível / Previdenciário');
+  const [area, setArea] = useState<AreaProcesso>('Previdenciário');
   const [papelCliente, setPapelCliente] = useState<TipoParte>('Autor');
   const [clienteId, setClienteId] = useState('');
-  const [parteContraria, setParteContraria] = useState('');
+  const [parteContraria, setParteContraria] = useState('INSS - Instituto Nacional do Seguro Social');
   const [valorCausa, setValorCausa] = useState('65000');
 
   if (!modalState.novoProcesso) return null;
@@ -94,9 +94,9 @@ export const NewProcessoModal: React.FC = () => {
                 onChange={e => setTribunal(e.target.value)}
                 className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5 text-xs text-slate-900 font-bold focus:border-[#d4af37] focus:bg-white focus:outline-none"
               >
+                <option value="TRF1" className="text-slate-900 font-black">TRF1 — Justiça Federal & JEF</option>
                 <option value="TJMA" className="text-slate-900 font-bold">TJMA (Estadual)</option>
                 <option value="TRT16" className="text-slate-900 font-bold">TRT16 (Trabalhista)</option>
-                <option value="TRF1" className="text-slate-900 font-bold">TRF1 (Federal)</option>
                 <option value="TJSP" className="text-slate-900 font-bold">TJSP (São Paulo)</option>
                 <option value="TJRJ" className="text-slate-900 font-bold">TJRJ (Rio de Janeiro)</option>
                 <option value="STJ" className="text-slate-900 font-bold">STJ / STF</option>
@@ -112,8 +112,9 @@ export const NewProcessoModal: React.FC = () => {
                 onChange={e => setArea(e.target.value as AreaProcesso)}
                 className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5 text-xs text-slate-900 font-bold focus:border-[#d4af37] focus:bg-white focus:outline-none"
               >
-                <option value="Cível" className="text-slate-900 font-bold">Cível</option>
-                <option value="Trabalhista" className="text-slate-900 font-bold">Trabalhista</option>
+                <option value="Previdenciário" className="text-slate-900 font-black">🛡️ Previdenciário (INSS / BPC / RPV)</option>
+                <option value="Cível" className="text-slate-900 font-bold">⚖️ Cível</option>
+                <option value="Trabalhista" className="text-slate-900 font-bold">🔨 Trabalhista</option>
                 <option value="Família e Sucessões" className="text-slate-900 font-bold">Família e Sucessões</option>
                 <option value="Penal" className="text-slate-900 font-bold">Penal</option>
                 <option value="Tributário" className="text-slate-900 font-bold">Tributário</option>

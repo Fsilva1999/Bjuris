@@ -16,7 +16,8 @@ import {
   ExternalLink,
   MapPin,
   BookOpen,
-  Sparkles
+  Sparkles,
+  ShieldCheck
 } from 'lucide-react';
 import { triggerDeadlineAlert } from '../utils/pwaNotifications';
 
@@ -48,19 +49,32 @@ export const Dashboard: React.FC = () => {
   return (
     <div className="space-y-6 animate-in fade-in duration-300 w-full">
       
-      {/* 🌟 3D GOLD QUICK ACCESS BAR (Passeio no Topo com 5 Ações Principais) */}
+      {/* 🌟 3D GOLD QUICK ACCESS BAR */}
       <div className="space-y-2">
         <div className="flex items-center justify-between">
           <h3 className="text-sm font-black font-outfit text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
             <Sparkles className="w-4 h-4 text-amber-600 animate-pulse" />
             Acesso Rápido 3D
           </h3>
-          <span className="text-[11px] font-bold text-amber-800">Principais Ferramentas</span>
+          <span className="text-[11px] font-bold text-amber-800">Previdenciário, TRF1, Cível & Trabalhista</span>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
           
-          {/* Action 1: Novo Processo CNJ */}
+          {/* Action 1: Previdenciário & TRF1 */}
+          <button
+            onClick={() => setActiveTab('previdenciario')}
+            className="p-4 rounded-2xl bg-gradient-to-br from-amber-950 via-slate-900 to-slate-950 border border-amber-500/60 hover:border-amber-400 text-white flex flex-col items-center justify-center text-center shadow-lg hover:shadow-2xl hover:scale-[1.03] transition-all group relative overflow-hidden"
+          >
+            <div className="absolute inset-0 bg-gradient-to-tr from-amber-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+            <div className="p-3 rounded-2xl bg-amber-500/30 text-amber-300 border border-amber-500/50 mb-2 group-hover:scale-110 transition-transform shadow-md">
+              <ShieldCheck className="w-6 h-6" />
+            </div>
+            <span className="text-xs font-black text-amber-300 group-hover:text-amber-200 transition-colors">Previdenciário</span>
+            <span className="text-[10px] text-amber-400 font-extrabold mt-0.5">Calculadora TRF1</span>
+          </button>
+
+          {/* Action 2: Novo Processo CNJ */}
           <button
             onClick={() => setModalState(prev => ({ ...prev, novoProcesso: true }))}
             className="p-4 rounded-2xl bg-gradient-to-br from-slate-900 via-slate-800 to-slate-950 border border-amber-500/40 hover:border-amber-400 text-white flex flex-col items-center justify-center text-center shadow-lg hover:shadow-2xl hover:scale-[1.03] transition-all group relative overflow-hidden"
@@ -70,10 +84,10 @@ export const Dashboard: React.FC = () => {
               <Scale className="w-6 h-6" />
             </div>
             <span className="text-xs font-black text-slate-100 group-hover:text-amber-400 transition-colors">Novo Processo</span>
-            <span className="text-[10px] text-amber-500/80 font-semibold mt-0.5">Cadastrar CNJ</span>
+            <span className="text-[10px] text-amber-500/80 font-semibold mt-0.5">Cadastrar CNJ/TRF1</span>
           </button>
 
-          {/* Action 2: Novo Cliente */}
+          {/* Action 3: Novo Cliente */}
           <button
             onClick={() => setModalState(prev => ({ ...prev, novoCliente: true }))}
             className="p-4 rounded-2xl bg-gradient-to-br from-slate-900 via-slate-800 to-slate-950 border border-amber-500/40 hover:border-amber-400 text-white flex flex-col items-center justify-center text-center shadow-lg hover:shadow-2xl hover:scale-[1.03] transition-all group relative overflow-hidden"
@@ -82,11 +96,11 @@ export const Dashboard: React.FC = () => {
             <div className="p-3 rounded-2xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 mb-2 group-hover:scale-110 transition-transform shadow-md">
               <Users className="w-6 h-6" />
             </div>
-            <span className="text-xs font-black text-slate-100 group-hover:text-emerald-400 transition-colors">Novo Cliente</span>
-            <span className="text-[10px] text-emerald-400/80 font-semibold mt-0.5">CRM PF / PJ</span>
+            <span className="text-xs font-black text-slate-100 group-hover:text-emerald-400 transition-colors">Novo Segurado</span>
+            <span className="text-[10px] text-emerald-400/80 font-semibold mt-0.5">Cliente & NB INSS</span>
           </button>
 
-          {/* Action 3: Agendar Prazo */}
+          {/* Action 4: Agendar Prazo */}
           <button
             onClick={() => setModalState(prev => ({ ...prev, novoPrazo: true }))}
             className="p-4 rounded-2xl bg-gradient-to-br from-slate-900 via-slate-800 to-slate-950 border border-amber-500/40 hover:border-amber-400 text-white flex flex-col items-center justify-center text-center shadow-lg hover:shadow-2xl hover:scale-[1.03] transition-all group relative overflow-hidden"
@@ -96,10 +110,10 @@ export const Dashboard: React.FC = () => {
               <Clock className="w-6 h-6" />
             </div>
             <span className="text-xs font-black text-slate-100 group-hover:text-amber-400 transition-colors">Agendar Prazo</span>
-            <span className="text-[10px] text-amber-500/80 font-semibold mt-0.5">Prazo & Audiência</span>
+            <span className="text-[10px] text-amber-500/80 font-semibold mt-0.5">Prazo & Perícia</span>
           </button>
 
-          {/* Action 4: Calculadora CPC */}
+          {/* Action 5: Calculadora CPC */}
           <button
             onClick={() => setActiveTab('calculadora')}
             className="p-4 rounded-2xl bg-gradient-to-br from-slate-900 via-slate-800 to-slate-950 border border-amber-500/40 hover:border-amber-400 text-white flex flex-col items-center justify-center text-center shadow-lg hover:shadow-2xl hover:scale-[1.03] transition-all group relative overflow-hidden"
@@ -112,17 +126,17 @@ export const Dashboard: React.FC = () => {
             <span className="text-[10px] text-purple-400/80 font-semibold mt-0.5">Contagem Úteis</span>
           </button>
 
-          {/* Action 5: Procuração Ad Judicia */}
+          {/* Action 6: Procuração Ad Judicia */}
           <button
             onClick={() => setModalState(prev => ({ ...prev, procuracao: true }))}
-            className="p-4 rounded-2xl bg-gradient-to-br from-slate-900 via-slate-800 to-slate-950 border border-amber-500/40 hover:border-amber-400 text-white flex flex-col items-center justify-center text-center shadow-lg hover:shadow-2xl hover:scale-[1.03] transition-all group relative overflow-hidden col-span-2 sm:col-span-1"
+            className="p-4 rounded-2xl bg-gradient-to-br from-slate-900 via-slate-800 to-slate-950 border border-amber-500/40 hover:border-amber-400 text-white flex flex-col items-center justify-center text-center shadow-lg hover:shadow-2xl hover:scale-[1.03] transition-all group relative overflow-hidden"
           >
             <div className="absolute inset-0 bg-gradient-to-tr from-amber-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
             <div className="p-3 rounded-2xl bg-amber-500/20 text-[#d4af37] border border-amber-500/40 mb-2 group-hover:scale-110 transition-transform shadow-md">
               <FileText className="w-6 h-6" />
             </div>
             <span className="text-xs font-black text-slate-100 group-hover:text-amber-400 transition-colors">Procuração</span>
-            <span className="text-[10px] text-amber-500/80 font-semibold mt-0.5">Gerar Ad Judicia</span>
+            <span className="text-[10px] text-amber-500/80 font-semibold mt-0.5">INSS / TRF1</span>
           </button>
 
         </div>
