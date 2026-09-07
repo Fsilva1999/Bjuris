@@ -24,7 +24,7 @@ import {
 } from 'lucide-react';
 import jsPDF from 'jspdf';
 
-export const Financeiro: React.FC = () => {
+export const Financeiro: React.FC<{ defaultTab?: 'lancamentos' | 'carnes' }> = ({ defaultTab }) => {
   const {
     financeiro,
     toggleFinanceiroStatus,
@@ -37,7 +37,13 @@ export const Financeiro: React.FC = () => {
   } = useLegal();
 
   // Active section tab: 'lancamentos' | 'carnes'
-  const [activeTab, setActiveTab] = useState<'lancamentos' | 'carnes'>('lancamentos');
+  const [activeTab, setActiveTab] = useState<'lancamentos' | 'carnes'>(defaultTab || 'lancamentos');
+
+  React.useEffect(() => {
+    if (defaultTab) {
+      setActiveTab(defaultTab);
+    }
+  }, [defaultTab]);
 
   // Chart Filters
   const [chartYear, setChartYear] = useState<string>('2026');
@@ -368,18 +374,22 @@ export const Financeiro: React.FC = () => {
       {activeTab === 'lancamentos' && (
         <div className="space-y-6">
           
-          {/* 3D Financial Evolution Chart Section - Styled like High-End Dark Dashboard */}
-          <div className="p-6 rounded-2xl bg-slate-950 border border-amber-500/30 shadow-2xl text-white space-y-5">
+          {/* 4D GOLDEN ASCENDING LINE & NODE CHART */}
+          <div className="p-6 rounded-2xl bg-slate-950 border border-amber-500/40 shadow-2xl text-white space-y-5 relative overflow-hidden">
             
+            {/* Ambient Background Gold Glow */}
+            <div className="absolute top-0 right-1/4 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
+            <div className="absolute bottom-0 left-10 w-72 h-72 bg-amber-600/10 rounded-full blur-3xl pointer-events-none" />
+
             {/* Chart Header & Controls */}
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-800 pb-4">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-800/80 pb-4 relative z-10">
               <div>
                 <h3 className="text-lg font-black font-outfit text-slate-100 flex items-center gap-2">
-                  <TrendingUp className="w-5 h-5 text-[#d4af37]" />
-                  Evolução Financeira 3D — Fluxo de Caixa
+                  <TrendingUp className="w-5 h-5 text-[#d4af37] animate-pulse" />
+                  Evolução Financeira 4D — Linha Dourada Ascensionada
                 </h3>
                 <p className="text-xs text-slate-400 font-medium">
-                  Análise comparativa de valores previstos vs. efetivamente recebidos
+                  Gráfico de curva 3D/4D reluzente com pontos de apogeu e valores flutuantes
                 </p>
               </div>
 
@@ -388,7 +398,7 @@ export const Financeiro: React.FC = () => {
                 <select
                   value={chartYear}
                   onChange={e => setChartYear(e.target.value)}
-                  className="bg-slate-900 border border-slate-800 rounded-xl px-3 py-1.5 text-xs font-bold text-amber-400 focus:border-amber-500 focus:outline-none"
+                  className="bg-slate-900 border border-amber-500/40 rounded-xl px-3 py-1.5 text-xs font-black text-amber-400 focus:border-amber-400 focus:outline-none shadow-inner"
                 >
                   <option value="2024">Ano 2024</option>
                   <option value="2025">Ano 2025</option>
@@ -398,7 +408,7 @@ export const Financeiro: React.FC = () => {
                 <select
                   value={chartPeriod}
                   onChange={e => setChartPeriod(e.target.value)}
-                  className="bg-slate-900 border border-slate-800 rounded-xl px-3 py-1.5 text-xs font-bold text-amber-400 focus:border-amber-500 focus:outline-none"
+                  className="bg-slate-900 border border-amber-500/40 rounded-xl px-3 py-1.5 text-xs font-black text-amber-400 focus:border-amber-400 focus:outline-none shadow-inner"
                 >
                   <option value="todos">Ano Todo (12 Meses)</option>
                   {mesesNomes.map((m, idx) => (
@@ -408,58 +418,243 @@ export const Financeiro: React.FC = () => {
               </div>
             </div>
 
-            {/* SVG 3D Curved Gradient Chart */}
-            <div className="relative pt-4 pb-2">
-              <div className="h-64 w-full flex items-end justify-between gap-2 px-2">
-                {chartDisplayData.map((item) => {
-                  const maxVal = Math.max(...monthlyData.map(d => Math.max(d.previsto, d.recebido)), 1000);
-                  const hPrevistoPct = Math.max((item.previsto / maxVal) * 100, 8);
-                  const hRecebidoPct = Math.max((item.recebido / maxVal) * 100, 8);
+            {/* 4D SVG GRAPH IMPLEMENTATION */}
+            {(() => {
+              const svgW = 900;
+              const svgH = 260;
+              const padX = 50;
+              const padTop = 45;
+              const padBottom = 40;
 
-                  return (
-                    <div key={item.mes} className="flex-1 flex flex-col items-center gap-2 group relative">
-                      
-                      {/* Tooltip on Hover */}
-                      <div className="absolute -top-14 hidden group-hover:flex flex-col items-center bg-slate-900 text-white text-[10px] p-2 rounded-xl border border-amber-500/50 shadow-2xl z-20 whitespace-nowrap">
-                        <span className="font-black text-[#d4af37]">{item.mes}/{chartYear}</span>
-                        <span>Recebido: R$ {item.recebido.toLocaleString('pt-BR')}</span>
-                        <span>Previsto: R$ {item.previsto.toLocaleString('pt-BR')}</span>
-                      </div>
+              const displayList = chartDisplayData;
+              const count = displayList.length;
 
-                      {/* 3D Pillar Bars */}
-                      <div className="w-full flex items-end justify-center gap-1.5 h-48">
-                        {/* Previsto Pillar */}
-                        <div
-                          style={{ height: `${hPrevistoPct}%` }}
-                          className="w-3 rounded-t-lg bg-gradient-to-t from-blue-900 via-blue-600 to-blue-400 opacity-60 group-hover:opacity-100 transition-all shadow-[0_0_12px_rgba(59,130,246,0.3)]"
-                          title={`Previsto: R$ ${item.previsto}`}
+              const maxVal = Math.max(
+                ...monthlyData.map(d => Math.max(d.previsto, d.recebido)),
+                5000
+              );
+
+              // Calculate (x, y) coordinates for Recebido and Previsto
+              const pointsRecebido = displayList.map((item, i) => {
+                const x = count === 1 ? svgW / 2 : padX + (i / (count - 1)) * (svgW - padX * 2);
+                const y = (svgH - padBottom) - (item.recebido / maxVal) * (svgH - padTop - padBottom);
+                return { x, y, item };
+              });
+
+              const pointsPrevisto = displayList.map((item, i) => {
+                const x = count === 1 ? svgW / 2 : padX + (i / (count - 1)) * (svgW - padX * 2);
+                const y = (svgH - padBottom) - (item.previsto / maxVal) * (svgH - padTop - padBottom);
+                return { x, y, item };
+              });
+
+              // Helper for smooth Bezier curve string
+              const buildBezierPath = (pts: { x: number; y: number }[]) => {
+                if (pts.length === 0) return '';
+                if (pts.length === 1) return `M ${pts[0].x},${pts[0].y}`;
+                let path = `M ${pts[0].x},${pts[0].y}`;
+                for (let i = 0; i < pts.length - 1; i++) {
+                  const curr = pts[i];
+                  const next = pts[i + 1];
+                  const cX = (curr.x + next.x) / 2;
+                  path += ` C ${cX},${curr.y} ${cX},${next.y} ${next.x},${next.y}`;
+                }
+                return path;
+              };
+
+              const pathRecebido = buildBezierPath(pointsRecebido);
+              const pathPrevisto = buildBezierPath(pointsPrevisto);
+
+              const firstX = pointsRecebido[0]?.x || padX;
+              const lastX = pointsRecebido[pointsRecebido.length - 1]?.x || (svgW - padX);
+              const areaRecebidoPath = `${pathRecebido} L ${lastX},${svgH - padBottom} L ${firstX},${svgH - padBottom} Z`;
+
+              return (
+                <div className="relative w-full overflow-x-auto pt-2">
+                  <div className="min-w-[650px]">
+                    <svg
+                      viewBox={`0 0 ${svgW} ${svgH}`}
+                      className="w-full h-auto overflow-visible"
+                    >
+                      <defs>
+                        {/* Golden Area Gradient */}
+                        <linearGradient id="goldAreaGrad" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" stopColor="#f59e0b" stopOpacity="0.45" />
+                          <stop offset="60%" stopColor="#d4af37" stopOpacity="0.15" />
+                          <stop offset="100%" stopColor="#0f172a" stopOpacity="0.0" />
+                        </linearGradient>
+
+                        {/* Golden Line Stroke Gradient */}
+                        <linearGradient id="goldLineGrad" x1="0" y1="0" x2="1" y2="0">
+                          <stop offset="0%" stopColor="#b8860b" />
+                          <stop offset="50%" stopColor="#fbbf24" />
+                          <stop offset="100%" stopColor="#fff7ed" />
+                        </linearGradient>
+
+                        {/* Blue Previsto Line Gradient */}
+                        <linearGradient id="blueLineGrad" x1="0" y1="0" x2="1" y2="0">
+                          <stop offset="0%" stopColor="#1e3a8a" />
+                          <stop offset="100%" stopColor="#38bdf8" />
+                        </linearGradient>
+
+                        {/* 4D Neon Glow Filter */}
+                        <filter id="goldGlow3D" x="-30%" y="-30%" width="160%" height="160%">
+                          <feGaussianBlur stdDeviation="5" result="blur" />
+                          <feMerge>
+                            <feMergeNode in="blur" />
+                            <feMergeNode in="SourceGraphic" />
+                          </feMerge>
+                        </filter>
+                      </defs>
+
+                      {/* Horizontal Grid Guides */}
+                      <g className="opacity-20 stroke-slate-700" strokeDasharray="4 4">
+                        <line x1={padX} y1={padTop} x2={svgW - padX} y2={padTop} />
+                        <line x1={padX} y1={padTop + (svgH - padTop - padBottom) / 2} x2={svgW - padX} y2={padTop + (svgH - padTop - padBottom) / 2} />
+                        <line x1={padX} y1={svgH - padBottom} x2={svgW - padX} y2={svgH - padBottom} />
+                      </g>
+
+                      {/* Area Fill under Golden Line */}
+                      <path d={areaRecebidoPath} fill="url(#goldAreaGrad)" />
+
+                      {/* Previsto Path (Blue Dotted Line) */}
+                      <path
+                        d={pathPrevisto}
+                        fill="none"
+                        stroke="url(#blueLineGrad)"
+                        strokeWidth="2.5"
+                        strokeDasharray="6 4"
+                        opacity="0.75"
+                      />
+
+                      {/* Golden 3D Glow Line (Thick Under Layer) */}
+                      <path
+                        d={pathRecebido}
+                        fill="none"
+                        stroke="#f59e0b"
+                        strokeWidth="8"
+                        opacity="0.3"
+                        filter="url(#goldGlow3D)"
+                      />
+
+                      {/* Golden 3D Line (Main Stroke) */}
+                      <path
+                        d={pathRecebido}
+                        fill="none"
+                        stroke="url(#goldLineGrad)"
+                        strokeWidth="4"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        filter="url(#goldGlow3D)"
+                      />
+
+                      {/* Previsto Dots */}
+                      {pointsPrevisto.map((pt, idx) => (
+                        <circle
+                          key={`prev-${idx}`}
+                          cx={pt.x}
+                          cy={pt.y}
+                          r="3"
+                          fill="#38bdf8"
+                          opacity="0.7"
                         />
-                        {/* Recebido 3D Gold Pillar */}
-                        <div
-                          style={{ height: `${hRecebidoPct}%` }}
-                          className="w-4 rounded-t-lg bg-gradient-to-t from-amber-700 via-amber-500 to-[#f59e0b] shadow-[0_0_18px_rgba(245,158,11,0.5)] group-hover:scale-105 transition-all"
-                          title={`Recebido: R$ ${item.recebido}`}
-                        />
-                      </div>
+                      ))}
 
-                      <span className="text-[11px] font-extrabold text-slate-400 group-hover:text-amber-400 transition-colors">
-                        {item.mes}
-                      </span>
-                    </div>
-                  );
-                })}
+                      {/* Golden 3D Ascending Nodes & Floating Values */}
+                      {pointsRecebido.map((pt, idx) => {
+                        const isMax = pt.item.recebido === maxRecebido && maxRecebido > 0;
+
+                        return (
+                          <g key={`rec-${idx}`} className="group cursor-pointer">
+                            
+                            {/* Outer Halo Circle */}
+                            <circle
+                              cx={pt.x}
+                              cy={pt.y}
+                              r={isMax ? "12" : "9"}
+                              fill="rgba(245, 158, 11, 0.25)"
+                              stroke="#fbbf24"
+                              strokeWidth="1.5"
+                              className="animate-pulse"
+                            />
+
+                            {/* Inner Golden Sphere */}
+                            <circle
+                              cx={pt.x}
+                              cy={pt.y}
+                              r={isMax ? "6" : "5"}
+                              fill="#f59e0b"
+                              stroke="#ffffff"
+                              strokeWidth="2"
+                              style={{ filter: 'drop-shadow(0 0 6px #f59e0b)' }}
+                              className="transition-transform group-hover:scale-125"
+                            />
+
+                            {/* White Core Pulse */}
+                            <circle
+                              cx={pt.x}
+                              cy={pt.y}
+                              r="2"
+                              fill="#ffffff"
+                            />
+
+                            {/* Floating Callout Badge Above Dot */}
+                            <g transform={`translate(${pt.x}, ${pt.y - 18})`}>
+                              <rect
+                                x="-32"
+                                y="-16"
+                                width="64"
+                                height="18"
+                                rx="9"
+                                fill={isMax ? "#f59e0b" : "#0f172a"}
+                                stroke={isMax ? "#ffffff" : "#d4af37"}
+                                strokeWidth="1"
+                                style={{ filter: 'drop-shadow(0 2px 6px rgba(0,0,0,0.5))' }}
+                              />
+                              <text
+                                x="0"
+                                y="-4"
+                                textAnchor="middle"
+                                fill={isMax ? "#0f172a" : "#fbbf24"}
+                                fontSize="9"
+                                fontWeight="900"
+                                fontFamily="sans-serif"
+                              >
+                                {pt.item.recebido > 0
+                                  ? `R$ ${pt.item.recebido >= 1000 ? `${(pt.item.recebido / 1000).toFixed(1)}k` : pt.item.recebido}`
+                                  : 'R$ 0'}
+                              </text>
+                            </g>
+
+                            {/* Month Label Below Axis */}
+                            <text
+                              x={pt.x}
+                              y={svgH - 12}
+                              textAnchor="middle"
+                              fill="#94a3b8"
+                              fontSize="11"
+                              fontWeight="800"
+                              className="group-hover:fill-amber-400 transition-colors"
+                            >
+                              {pt.item.mes}
+                            </text>
+                          </g>
+                        );
+                      })}
+                    </svg>
+                  </div>
+                </div>
+              );
+            })()}
+
+            {/* Chart Legend */}
+            <div className="flex flex-wrap items-center justify-center gap-6 pt-4 border-t border-slate-900 text-xs font-bold">
+              <div className="flex items-center gap-2">
+                <div className="w-3.5 h-3.5 rounded-full bg-gradient-to-r from-amber-500 via-amber-400 to-amber-300 shadow-[0_0_10px_rgba(245,158,11,0.8)]" />
+                <span className="text-amber-400 font-extrabold">Total Efetivamente Recebido (Linha 4D Dourada)</span>
               </div>
-
-              {/* Chart Legend */}
-              <div className="flex items-center justify-center gap-6 pt-4 border-t border-slate-900 text-xs font-bold">
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full bg-gradient-to-r from-amber-500 to-[#f59e0b] shadow" />
-                  <span className="text-amber-400">Total Efetivamente Recebido</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full bg-gradient-to-r from-blue-600 to-blue-400 opacity-70" />
-                  <span className="text-slate-400">Total Previsto no Período</span>
-                </div>
+              <div className="flex items-center gap-2">
+                <div className="w-3.5 h-3.5 rounded-full bg-gradient-to-r from-blue-700 to-sky-400 opacity-80" />
+                <span className="text-slate-400">Total Previsto no Período</span>
               </div>
             </div>
 

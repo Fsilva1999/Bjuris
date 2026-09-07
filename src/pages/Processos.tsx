@@ -152,7 +152,7 @@ export const Processos: React.FC = () => {
           <Search className="w-4 h-4 text-amber-600 absolute left-3 top-3" />
           <input
             type="text"
-            placeholder="Buscar por nº CNJ, cliente, parte contrária ou Vara (ex: São Luís, Imperatriz)..."
+            placeholder="Buscar por nº CNJ, cliente, parte contrária ou Vara..."
             value={searchTerm}
             onChange={e => setSearchTerm(e.target.value)}
             className="w-full bg-slate-50 border border-slate-300 rounded-xl pl-9 pr-4 py-2 text-xs text-slate-900 font-medium focus:border-amber-500 focus:bg-white focus:outline-none"
@@ -166,9 +166,9 @@ export const Processos: React.FC = () => {
             className="flex-1 md:flex-initial bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-900 font-bold focus:border-amber-500 focus:outline-none"
           >
             <option value="todos">Todos os Tribunais</option>
-            <option value="TJMA">TJMA (Maranhão)</option>
-            <option value="TRT16">TRT16 (Maranhão Trabalhista)</option>
-            <option value="TRF1">TRF1 (Maranhão Federal)</option>
+            <option value="TJMA">TJMA (Estadual)</option>
+            <option value="TRT16">TRT16 (Trabalhista)</option>
+            <option value="TRF1">TRF1 (Federal)</option>
             <option value="TJSP">TJSP</option>
             <option value="TJRJ">TJRJ</option>
           </select>
@@ -207,7 +207,7 @@ export const Processos: React.FC = () => {
           <div className="text-center py-12 glass-panel bg-white rounded-2xl border border-slate-200 shadow-sm">
             <AlertCircle className="w-10 h-10 text-slate-400 mx-auto mb-2" />
             <p className="text-sm font-bold text-slate-900">Nenhum processo encontrado</p>
-            <p className="text-xs text-slate-500 mt-1">Tente ajustar a busca por Vara do Maranhão ou cadastrar um novo processo.</p>
+            <p className="text-xs text-slate-500 mt-1">Tente ajustar a busca por Vara ou cadastrar um novo processo.</p>
           </div>
         ) : (
           filteredProcessos.map(proc => (

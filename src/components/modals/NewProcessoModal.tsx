@@ -65,8 +65,8 @@ export const NewProcessoModal: React.FC = () => {
             <Briefcase className="w-6 h-6" />
           </div>
           <div>
-            <h3 className="text-lg font-black font-outfit text-slate-900">Cadastrar Novo Processo CNJ (Maranhão / Brasil)</h3>
-            <p className="text-xs text-slate-600 font-bold">Selecione o Tribunal e Vara do Maranhão ou outros estados</p>
+            <h3 className="text-lg font-black font-outfit text-slate-900">Cadastrar Novo Processo CNJ</h3>
+            <p className="text-xs text-slate-600 font-bold">Selecione o Tribunal e Vara ou Estado do processo</p>
           </div>
         </div>
 
@@ -77,7 +77,7 @@ export const NewProcessoModal: React.FC = () => {
             </label>
             <input
               type="text"
-              placeholder="Ex: 0804812-39.2024.8.10.0001 (TJMA)"
+              placeholder="Ex: 0804812-39.2024.8.10.0001"
               value={numeroCnj}
               onChange={e => setNumeroCnj(e.target.value)}
               className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5 text-xs text-slate-900 font-bold placeholder-slate-400 focus:border-[#d4af37] focus:bg-white focus:ring-2 focus:ring-[#d4af37]/30 focus:outline-none"
@@ -94,9 +94,9 @@ export const NewProcessoModal: React.FC = () => {
                 onChange={e => setTribunal(e.target.value)}
                 className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5 text-xs text-slate-900 font-bold focus:border-[#d4af37] focus:bg-white focus:outline-none"
               >
-                <option value="TJMA" className="text-slate-900 font-bold">TJMA (Maranhão - Estadual)</option>
-                <option value="TRT16" className="text-slate-900 font-bold">TRT16 (Maranhão - Trabalhista)</option>
-                <option value="TRF1" className="text-slate-900 font-bold">TRF1 (Maranhão - Federal)</option>
+                <option value="TJMA" className="text-slate-900 font-bold">TJMA (Estadual)</option>
+                <option value="TRT16" className="text-slate-900 font-bold">TRT16 (Trabalhista)</option>
+                <option value="TRF1" className="text-slate-900 font-bold">TRF1 (Federal)</option>
                 <option value="TJSP" className="text-slate-900 font-bold">TJSP (São Paulo)</option>
                 <option value="TJRJ" className="text-slate-900 font-bold">TJRJ (Rio de Janeiro)</option>
                 <option value="STJ" className="text-slate-900 font-bold">STJ / STF</option>
@@ -124,7 +124,7 @@ export const NewProcessoModal: React.FC = () => {
 
           <div>
             <label className="block text-xs font-black text-slate-900 mb-1 uppercase tracking-wide">
-              Selecione a Vara ou Juízo (Maranhão)
+              Selecione a Vara ou Juízo
             </label>
             <select
               value={vara}

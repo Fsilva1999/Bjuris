@@ -32,7 +32,7 @@ export const AgendaPrazos: React.FC = () => {
       case 'audiencia_online':
         return <span className="px-3 py-1 rounded bg-blue-100 text-blue-900 font-black text-xs border border-blue-300 uppercase">Audiência Telepresencial</span>;
       case 'audiencia_presencial':
-        return <span className="px-3 py-1 rounded bg-purple-100 text-purple-900 font-black text-xs border border-purple-300 uppercase">Audiência Fórum Maranhão</span>;
+        return <span className="px-3 py-1 rounded bg-purple-100 text-purple-900 font-black text-xs border border-purple-300 uppercase">Audiência Presencial</span>;
       default:
         return <span className="px-3 py-1 rounded bg-emerald-100 text-emerald-900 font-black text-xs border border-emerald-300 uppercase">Reunião</span>;
     }
@@ -60,7 +60,7 @@ export const AgendaPrazos: React.FC = () => {
             Agenda de Prazos Fatais & Audiências
           </h2>
           <p className="text-xs text-slate-700 font-bold mt-1">
-            Controle de intimações do TJMA, TRT16, prazos em dias úteis CPC/2015 e alertas com som
+            Controle de intimações judiciais, prazos em dias úteis CPC/2015 e alertas com som
           </p>
         </div>
 

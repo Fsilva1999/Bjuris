@@ -62,7 +62,7 @@ export const Navbar: React.FC = () => {
           <Search className="w-4 h-4 text-[#d4af37] absolute left-3 pointer-events-none" />
           <input
             type="text"
-            placeholder="Buscar por nº CNJ, cliente ou vara do Maranhão..."
+            placeholder="Buscar por nº CNJ, cliente ou vara..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full bg-slate-100 border border-slate-300 rounded-xl pl-9 pr-4 py-2 text-xs text-slate-900 font-bold placeholder-slate-500 focus:outline-none focus:border-[#d4af37] focus:bg-white focus:ring-2 focus:ring-[#d4af37]/30 transition-all"

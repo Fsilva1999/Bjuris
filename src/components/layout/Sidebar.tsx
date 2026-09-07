@@ -6,6 +6,7 @@ import {
   Users,
   Calendar,
   DollarSign,
+  CreditCard,
   Calculator,
   Settings,
   ShieldCheck,
@@ -19,10 +20,11 @@ export const Sidebar: React.FC = () => {
 
   const navItems = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { id: 'processos', label: 'Processos CNJ / Maranhão', icon: Briefcase, badge: processos.length },
+    { id: 'processos', label: 'Processos CNJ', icon: Briefcase, badge: processos.length },
     { id: 'clientes', label: 'Clientes & Documentos', icon: Users },
     { id: 'agenda', label: 'Agenda & Prazos', icon: Calendar, badge: prazosPendentes > 0 ? prazosPendentes : undefined, badgeColor: 'bg-red-600 text-white font-bold' },
     { id: 'financeiro', label: 'Financeiro & Honorários', icon: DollarSign },
+    { id: 'carnes', label: 'Carnês (BPC / LOAS)', icon: CreditCard },
     { id: 'calculadora', label: 'Calculadora CPC', icon: Calculator },
     { id: 'configuracoes', label: 'Configurações', icon: Settings },
   ];

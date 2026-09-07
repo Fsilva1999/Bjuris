@@ -65,7 +65,7 @@ export const NewClienteModal: React.FC = () => {
           </div>
           <div>
             <h3 className="text-lg font-black font-outfit text-slate-900">Cadastrar Novo Cliente Advocatício</h3>
-            <p className="text-xs text-slate-600 font-bold">Informe todos os dados para qualificação em ações judiciais no Maranhão e Brasil</p>
+            <p className="text-xs text-slate-600 font-bold">Informe todos os dados para qualificação em ações judiciais</p>
           </div>
         </div>
 
@@ -100,7 +100,7 @@ export const NewClienteModal: React.FC = () => {
             <input
               type="text"
               required
-              placeholder={tipo === 'PF' ? 'Ex: João Carlos da Silva' : 'Ex: Maranhão Soluções LTDA'}
+              placeholder={tipo === 'PF' ? 'Ex: João Carlos da Silva' : 'Ex: Brasil Soluções LTDA'}
               value={nome}
               onChange={e => setNome(e.target.value)}
               className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5 text-xs text-slate-900 font-bold placeholder-slate-400 focus:border-[#d4af37] focus:bg-white focus:outline-none"

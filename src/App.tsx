@@ -77,7 +77,9 @@ const MainContent: React.FC = () => {
       case 'agenda':
         return <AgendaPrazos />;
       case 'financeiro':
-        return <Financeiro />;
+        return <Financeiro defaultTab="lancamentos" />;
+      case 'carnes':
+        return <Financeiro defaultTab="carnes" />;
       case 'calculadora':
         return <Calculadora />;
       case 'configuracoes':
