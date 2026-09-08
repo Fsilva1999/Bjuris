@@ -38,6 +38,8 @@ export interface Processo {
   tipoCalculoRpvPrecatorio?: 'RPV (< 60 SM)' | 'Precatório Federal (> 60 SM)';
   secaoJudiciariaTrf1?: string; // Ex: SJDF, SJMA, SJMG, SJGO, SJBA
   faseProcessualInss?: string; // Ex: Requerimento Administrativo, Perícia JEF, Concessão
+  temaPrevidenciario?: string; // Ex: Aposentadoria por idade urbana
+  categoriaPrevidenciaria?: string; // Ex: Aposentadorias
 
   ultimaMovimentacao: {
     data: string;

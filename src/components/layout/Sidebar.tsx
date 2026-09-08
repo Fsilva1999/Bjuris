@@ -34,7 +34,10 @@ export const Sidebar: React.FC = () => {
     <aside className="hidden lg:flex flex-col w-64 bg-white border-r border-slate-200 min-h-screen p-4 flex-shrink-0 shadow-sm">
       
       {/* Brand Header with Brenda Sousa Gold 3D Logo */}
-      <div className="flex items-center gap-3 px-2 py-3 mb-6 border-b border-slate-100">
+      <div
+        onClick={() => setActiveTab('dashboard')}
+        className="flex items-center gap-3 px-2 py-3 mb-6 border-b border-slate-100 cursor-pointer hover:opacity-80 transition-all"
+      >
         <img
           src={logoUrl}
           alt="Brenda Sousa Advogada Logo"

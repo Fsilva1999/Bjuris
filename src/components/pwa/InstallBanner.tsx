@@ -5,20 +5,30 @@ import { requestNotificationPermission, sendNativeNotification } from '../../uti
 
 export const InstallBanner: React.FC = () => {
   const { canInstallPwa, installPwa } = useLegal();
-  const [dismissed, setDismissed] = useState(false);
+  const [dismissed, setDismissed] = useState<boolean>(() => {
+    return localStorage.getItem('bjuris_pwa_banner_dismissed') === 'true';
+  });
   const [showGuideModal, setShowGuideModal] = useState(false);
   const [isStandalone, setIsStandalone] = useState(false);
   const [permission, setPermission] = useState<NotificationPermission>('default');
 
   useEffect(() => {
-    // Check if app is already running as an installed PWA
-    const standalone = window.matchMedia('(display-mode: standalone)').matches || (window.navigator as any).standalone === true;
+    // Check if app is already running as an installed PWA on mobile or desktop
+    const standalone =
+      window.matchMedia('(display-mode: standalone)').matches ||
+      (window.navigator as any).standalone === true ||
+      window.matchMedia('(display-mode: minimal-ui)').matches;
     setIsStandalone(standalone);
 
     if ('Notification' in window) {
       setPermission(Notification.permission);
     }
   }, []);
+
+  const handleDismiss = () => {
+    setDismissed(true);
+    localStorage.setItem('bjuris_pwa_banner_dismissed', 'true');
+  };
 
   const handleAuthorizeNotifications = async () => {
     const perm = await requestNotificationPermission();
@@ -32,7 +42,8 @@ export const InstallBanner: React.FC = () => {
     }
   };
 
-  if (isStandalone && permission === 'granted') return null;
+  // DO NOT show the install banner card if app is running installed in standalone mode OR if dismissed
+  if (isStandalone) return null;
   if (dismissed && !showGuideModal) return null;
 
   return (
@@ -72,7 +83,7 @@ export const InstallBanner: React.FC = () => {
             </button>
 
             <button
-              onClick={() => setDismissed(true)}
+              onClick={handleDismiss}
               className="p-1 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white transition-colors"
               title="Fechar"
             >

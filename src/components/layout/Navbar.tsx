@@ -43,7 +43,10 @@ export const Navbar: React.FC = () => {
       <div className="flex items-center justify-between gap-4 max-w-[1700px] mx-auto">
         
         {/* Brand logo for mobile / tablet */}
-        <div className="flex items-center gap-3 lg:hidden">
+        <div
+          onClick={() => setActiveTab('dashboard')}
+          className="flex items-center gap-3 lg:hidden cursor-pointer hover:opacity-80 transition-all"
+        >
           <img
             src={logoUrl}
             alt="BJuris Logo"

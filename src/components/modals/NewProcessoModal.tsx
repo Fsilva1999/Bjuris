@@ -2,7 +2,237 @@ import React, { useState } from 'react';
 import { useLegal } from '../../context/LegalContext';
 import { AreaProcesso, TipoParte } from '../../types/legal';
 import { LISTA_VARAS_MARANHAO } from '../../services/mockData';
-import { X, Briefcase, Plus } from 'lucide-react';
+import { X, Briefcase, Plus, ChevronDown } from 'lucide-react';
+
+// ─── Dados hierárquicos das áreas previdenciárias ────────────────────────────
+const TEMAS_PREVIDENCIARIOS: { categoria: string; itens: string[] }[] = [
+  {
+    categoria: 'Aposentadorias',
+    itens: [
+      'Aposentadoria por idade urbana',
+      'Aposentadoria por idade rural',
+      'Aposentadoria por tempo de contribuição — regras de transição',
+      'Aposentadoria especial',
+      'Aposentadoria por incapacidade permanente',
+      'Aposentadoria da pessoa com deficiência',
+      'Aposentadoria do professor',
+      'Aposentadoria híbrida',
+      'Aposentadoria do trabalhador rural',
+      'Aposentadorias pelas regras anteriores à Reforma da Previdência',
+      'Planejamento previdenciário',
+    ],
+  },
+  {
+    categoria: 'Benefícios por incapacidade',
+    itens: [
+      'Auxílio por incapacidade temporária (antigo auxílio-doença)',
+      'Aposentadoria por incapacidade permanente',
+      'Auxílio-acidente',
+      'Benefícios decorrentes de acidente de trabalho',
+      'Reabilitação profissional',
+      'Discussão de incapacidade e perícia médica',
+    ],
+  },
+  {
+    categoria: 'Benefícios para dependentes',
+    itens: [
+      'Pensão por morte',
+      'Pensão por morte rural',
+      'Auxílio-reclusão',
+      'Revisão de pensão',
+      'Concessão e manutenção de benefícios de dependentes',
+    ],
+  },
+  {
+    categoria: 'Previdência rural',
+    itens: [
+      'Aposentadoria rural',
+      'Aposentadoria híbrida',
+      'Auxílio por incapacidade do segurado rural',
+      'Salário-maternidade rural',
+      'Pensão por morte rural',
+      'Comprovação de atividade rural',
+      'Segurado especial',
+      'Economia familiar',
+      'Tempo rural antigo',
+    ],
+  },
+  {
+    categoria: 'Salário-maternidade',
+    itens: [
+      'Salário-maternidade urbano',
+      'Salário-maternidade rural',
+      'Salário-maternidade da segurada facultativa',
+      'Salário-maternidade da contribuinte individual',
+      'Salário-maternidade em situações de adoção',
+      'Discussões sobre carência e qualidade de segurada',
+    ],
+  },
+  {
+    categoria: 'Pessoa com deficiência',
+    itens: [
+      'Aposentadoria da pessoa com deficiência por idade',
+      'Aposentadoria da pessoa com deficiência por tempo de contribuição',
+      'Avaliação do grau de deficiência',
+      'Benefícios por incapacidade',
+      'BPC/LOAS para pessoa com deficiência',
+    ],
+  },
+  {
+    categoria: 'BPC/LOAS',
+    itens: [
+      'BPC para pessoa com deficiência',
+      'BPC para pessoa idosa',
+      'Avaliação socioeconômica',
+      'Renda familiar',
+      'Cadastro Único',
+      'Negativa ou suspensão do benefício',
+      'Restabelecimento',
+      'Revisão',
+      'Judicialização',
+    ],
+  },
+  {
+    categoria: 'Revisões de benefícios',
+    itens: [
+      'Revisão de aposentadoria',
+      'Revisão de pensão',
+      'Revisão de benefício por incapacidade',
+      'Revisão de cálculo',
+      'Revisão de salários de contribuição',
+      'Inclusão de períodos não considerados',
+      'Inclusão de tempo rural',
+      'Inclusão de tempo especial',
+      'Erros no cálculo do INSS',
+      'Revisões decorrentes de decisões judiciais',
+    ],
+  },
+  {
+    categoria: 'Tempo de contribuição',
+    itens: [
+      'Contagem de tempo',
+      'Averbação de tempo',
+      'Tempo rural',
+      'Tempo especial',
+      'Conversão de tempo especial',
+      'Tempo de serviço público',
+      'Tempo militar',
+      'Contribuições em atraso',
+      'Acerto de vínculos',
+      'CTC',
+      'Períodos não registrados no CNIS',
+    ],
+  },
+  {
+    categoria: 'Atividade especial',
+    itens: [
+      'Insalubridade',
+      'Periculosidade',
+      'Exposição a agentes químicos',
+      'Agentes físicos',
+      'Agentes biológicos',
+      'PPP',
+      'LTCAT',
+      'Enquadramento de atividade especial',
+      'Conversão de tempo especial',
+      'Discussões sobre EPI',
+    ],
+  },
+  {
+    categoria: 'Contribuições ao INSS',
+    itens: [
+      'Segurado empregado',
+      'Contribuinte individual',
+      'Facultativo',
+      'MEI',
+      'Segurado especial',
+      'Contribuição em atraso',
+      'Cálculo de contribuições',
+      'Planejamento de contribuições',
+      'Restituição de contribuições',
+      'Regularização do CNIS',
+    ],
+  },
+  {
+    categoria: 'CNIS e problemas cadastrais',
+    itens: [
+      'Vínculos ausentes',
+      'Vínculos incorretos',
+      'Salários de contribuição incorretos',
+      'Indicadores do CNIS',
+      'Acerto de dados',
+      'Inclusão de contribuições',
+      'Exclusão/correção de informações incorretas',
+    ],
+  },
+  {
+    categoria: 'Processos administrativos',
+    itens: [
+      'Pedido de benefício no Meu INSS',
+      'Cumprimento de exigência',
+      'Recurso administrativo',
+      'Pedido de revisão',
+      'Justificação administrativa',
+      'Contestação de indeferimento',
+      'Restabelecimento de benefício',
+    ],
+  },
+  {
+    categoria: 'Processos judiciais',
+    itens: [
+      'Ação de concessão de benefício',
+      'Ação de restabelecimento',
+      'Ação de revisão',
+      'Mandado de segurança em situações cabíveis',
+      'Ações relacionadas a perícia',
+      'Cobrança de parcelas atrasadas',
+      'Tutela de urgência',
+      'Cumprimento de sentença',
+      'Execução de atrasados',
+    ],
+  },
+  {
+    categoria: 'Valores atrasados',
+    itens: [
+      'Cálculo de atrasados',
+      'Parcelas vencidas',
+      'Correção monetária',
+      'Juros',
+      'RPV',
+      'Precatório',
+      'Cumprimento de sentença',
+    ],
+  },
+  {
+    categoria: 'Planejamento previdenciário',
+    itens: [
+      'Quando se aposentar',
+      'Qual regra é mais vantajosa',
+      'Quanto contribuir',
+      'Quanto poderá receber',
+      'Análise do CNIS',
+      'Regras de transição',
+      'Tempo especial',
+      'Tempo rural',
+      'Simulação de aposentadoria',
+    ],
+  },
+  {
+    categoria: 'Outros temas',
+    itens: [
+      'Qualidade de segurado',
+      'Período de graça',
+      'Carência',
+      'Dependentes',
+      'Acumulação de benefícios',
+      'Descontos indevidos',
+      'Empréstimos consignados',
+      'Bloqueio/suspensão de benefício',
+      'Prova de vida',
+      'Pagamentos não recebidos',
+    ],
+  },
+];
 
 export const NewProcessoModal: React.FC = () => {
   const { modalState, setModalState, clientes, addProcesso, perfil } = useLegal();
@@ -18,7 +248,26 @@ export const NewProcessoModal: React.FC = () => {
   const [parteContraria, setParteContraria] = useState('INSS - Instituto Nacional do Seguro Social');
   const [valorCausa, setValorCausa] = useState('65000');
 
+  // Previdenciário theme selection
+  const [categoriaPrevidenciaria, setCategoriaPrevidenciaria] = useState('');
+  const [temaPrevidenciario, setTemaPrevidenciario] = useState('');
+
   if (!modalState.novoProcesso) return null;
+
+  const itensDaCategoria = TEMAS_PREVIDENCIARIOS.find(t => t.categoria === categoriaPrevidenciaria)?.itens ?? [];
+
+  const handleAreaChange = (novaArea: string) => {
+    setArea(novaArea as AreaProcesso);
+    if (novaArea !== 'Previdenciário') {
+      setCategoriaPrevidenciaria('');
+      setTemaPrevidenciario('');
+    }
+  };
+
+  const handleCategoriaChange = (cat: string) => {
+    setCategoriaPrevidenciaria(cat);
+    setTemaPrevidenciario('');
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -43,7 +292,11 @@ export const NewProcessoModal: React.FC = () => {
       parteContraria: parteContraria || 'Réu Não Especificado',
       valorCausa: parseFloat(valorCausa) || 0,
       dataDistribuicao: new Date().toISOString().split('T')[0],
-      advogadoResponsavel: perfil.nome
+      advogadoResponsavel: perfil.nome,
+      ...(area === 'Previdenciário' && {
+        categoriaPrevidenciaria: categoriaPrevidenciaria || undefined,
+        temaPrevidenciario: temaPrevidenciario || undefined,
+      }),
     });
 
     setModalState(prev => ({ ...prev, novoProcesso: false }));
@@ -52,7 +305,7 @@ export const NewProcessoModal: React.FC = () => {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in">
       <div className="w-full max-w-xl bg-white rounded-2xl border border-slate-300 shadow-2xl p-6 relative max-h-[92vh] overflow-y-auto text-slate-900">
-        
+
         <button
           onClick={() => setModalState(prev => ({ ...prev, novoProcesso: false }))}
           className="absolute top-4 right-4 text-slate-400 hover:text-slate-900 transition-colors"
@@ -71,6 +324,7 @@ export const NewProcessoModal: React.FC = () => {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Número CNJ */}
           <div>
             <label className="block text-xs font-black text-slate-900 mb-1 uppercase tracking-wide">
               Número do Processo (Padrão CNJ)
@@ -84,6 +338,7 @@ export const NewProcessoModal: React.FC = () => {
             />
           </div>
 
+          {/* Tribunal + Área */}
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="block text-xs font-black text-slate-900 mb-1 uppercase tracking-wide">
@@ -94,12 +349,12 @@ export const NewProcessoModal: React.FC = () => {
                 onChange={e => setTribunal(e.target.value)}
                 className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5 text-xs text-slate-900 font-bold focus:border-[#d4af37] focus:bg-white focus:outline-none"
               >
-                <option value="TRF" className="text-slate-900 font-black">Justiça Federal & JEF</option>
-                <option value="TJMA" className="text-slate-900 font-bold">TJMA (Estadual)</option>
-                <option value="TRT16" className="text-slate-900 font-bold">TRT16 (Trabalhista)</option>
-                <option value="TJSP" className="text-slate-900 font-bold">TJSP (São Paulo)</option>
-                <option value="TJRJ" className="text-slate-900 font-bold">TJRJ (Rio de Janeiro)</option>
-                <option value="STJ" className="text-slate-900 font-bold">STJ / STF</option>
+                <option value="TRF">Justiça Federal & JEF</option>
+                <option value="TJMA">TJMA (Estadual)</option>
+                <option value="TRT16">TRT16 (Trabalhista)</option>
+                <option value="TJSP">TJSP (São Paulo)</option>
+                <option value="TJRJ">TJRJ (Rio de Janeiro)</option>
+                <option value="STJ">STJ / STF</option>
               </select>
             </div>
 
@@ -109,20 +364,83 @@ export const NewProcessoModal: React.FC = () => {
               </label>
               <select
                 value={area}
-                onChange={e => setArea(e.target.value as AreaProcesso)}
+                onChange={e => handleAreaChange(e.target.value)}
                 className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5 text-xs text-slate-900 font-bold focus:border-[#d4af37] focus:bg-white focus:outline-none"
               >
-                <option value="Previdenciário" className="text-slate-900 font-black">🛡️ Previdenciário (INSS / BPC / RPV)</option>
-                <option value="Cível" className="text-slate-900 font-bold">⚖️ Cível</option>
-                <option value="Trabalhista" className="text-slate-900 font-bold">🔨 Trabalhista</option>
-                <option value="Família e Sucessões" className="text-slate-900 font-bold">Família e Sucessões</option>
-                <option value="Penal" className="text-slate-900 font-bold">Penal</option>
-                <option value="Tributário" className="text-slate-900 font-bold">Tributário</option>
-                <option value="Empresarial" className="text-slate-900 font-bold">Empresarial</option>
+                <option value="Previdenciário">Previdenciário</option>
+                <option value="Cível">Cível</option>
+                <option value="Trabalhista">Trabalhista</option>
+                <option value="Família e Sucessões">Família e Sucessões</option>
+                <option value="Penal">Penal</option>
+                <option value="Tributário">Tributário</option>
+                <option value="Empresarial">Empresarial</option>
               </select>
             </div>
           </div>
 
+          {/* ─── BLOCO PREVIDENCIÁRIO: seleção de categoria + tema ─────────────── */}
+          {area === 'Previdenciário' && (
+            <div className="rounded-2xl border border-amber-200 bg-amber-50/60 p-4 space-y-3">
+              <p className="text-[11px] font-black text-amber-800 uppercase tracking-wider flex items-center gap-1.5">
+                <span className="w-4 h-4 rounded bg-amber-400 text-slate-950 flex items-center justify-center text-[9px] font-black flex-shrink-0">P</span>
+                Tema Previdenciário
+              </p>
+
+              {/* Nível 1: Categoria */}
+              <div>
+                <label className="block text-[10px] font-black text-slate-700 mb-1 uppercase tracking-wide">
+                  Categoria
+                </label>
+                <select
+                  value={categoriaPrevidenciaria}
+                  onChange={e => handleCategoriaChange(e.target.value)}
+                  className="w-full bg-white border border-amber-300 rounded-xl px-3 py-2.5 text-xs text-slate-900 font-bold focus:border-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-400/30"
+                >
+                  <option value="">Selecione a categoria...</option>
+                  {TEMAS_PREVIDENCIARIOS.map(t => (
+                    <option key={t.categoria} value={t.categoria}>
+                      {t.categoria}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Nível 2: Tema específico — aparece quando categoria está selecionada */}
+              {categoriaPrevidenciaria && (
+                <div>
+                  <label className="block text-[10px] font-black text-slate-700 mb-1 uppercase tracking-wide">
+                    Tema específico
+                  </label>
+                  <select
+                    value={temaPrevidenciario}
+                    onChange={e => setTemaPrevidenciario(e.target.value)}
+                    className="w-full bg-white border border-amber-300 rounded-xl px-3 py-2.5 text-xs text-slate-900 font-bold focus:border-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-400/30"
+                  >
+                    <option value="">Selecione o tema...</option>
+                    {itensDaCategoria.map(item => (
+                      <option key={item} value={item}>
+                        {item}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
+
+              {/* Tag de confirmação quando ambos selecionados */}
+              {categoriaPrevidenciaria && temaPrevidenciario && (
+                <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-amber-100 border border-amber-300">
+                  <div className="w-1.5 h-1.5 rounded-full bg-amber-500 flex-shrink-0" />
+                  <p className="text-[11px] font-bold text-amber-900 leading-snug">
+                    <span className="text-amber-600">{categoriaPrevidenciaria}</span>
+                    {' — '}
+                    {temaPrevidenciario}
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Vara */}
           <div>
             <label className="block text-xs font-black text-slate-900 mb-1 uppercase tracking-wide">
               Selecione a Vara ou Juízo
@@ -133,7 +451,7 @@ export const NewProcessoModal: React.FC = () => {
               className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5 text-xs text-slate-900 font-bold focus:border-[#d4af37] focus:bg-white focus:outline-none mb-2"
             >
               {LISTA_VARAS_MARANHAO.map(v => (
-                <option key={v} value={v} className="text-slate-900 font-bold">{v}</option>
+                <option key={v} value={v}>{v}</option>
               ))}
             </select>
 
@@ -146,6 +464,7 @@ export const NewProcessoModal: React.FC = () => {
             />
           </div>
 
+          {/* Cliente + Posição */}
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="block text-xs font-black text-slate-900 mb-1 uppercase tracking-wide">
@@ -157,9 +476,9 @@ export const NewProcessoModal: React.FC = () => {
                 required
                 className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5 text-xs text-slate-900 font-bold focus:border-[#d4af37] focus:bg-white focus:outline-none"
               >
-                <option value="" className="text-slate-900 font-bold">Selecione o cliente...</option>
+                <option value="">Selecione o cliente...</option>
                 {clientes.map(c => (
-                  <option key={c.id} value={c.id} className="text-slate-900 font-bold">{c.nome} ({c.tipo})</option>
+                  <option key={c.id} value={c.id}>{c.nome} ({c.tipo})</option>
                 ))}
               </select>
             </div>
@@ -173,13 +492,14 @@ export const NewProcessoModal: React.FC = () => {
                 onChange={e => setPapelCliente(e.target.value as TipoParte)}
                 className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5 text-xs text-slate-900 font-bold focus:border-[#d4af37] focus:bg-white focus:outline-none"
               >
-                <option value="Autor" className="text-slate-900 font-bold">Autor / Requerente</option>
-                <option value="Réu" className="text-slate-900 font-bold">Réu / Requerido</option>
-                <option value="Terceiro Interessado" className="text-slate-900 font-bold">Terceiro Interessado</option>
+                <option value="Autor">Autor / Requerente</option>
+                <option value="Réu">Réu / Requerido</option>
+                <option value="Terceiro Interessado">Terceiro Interessado</option>
               </select>
             </div>
           </div>
 
+          {/* Parte Contrária + Valor */}
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="block text-xs font-black text-slate-900 mb-1 uppercase tracking-wide">
@@ -207,6 +527,7 @@ export const NewProcessoModal: React.FC = () => {
             </div>
           </div>
 
+          {/* Footer */}
           <div className="pt-4 border-t border-slate-100 flex justify-end gap-3">
             <button
               type="button"

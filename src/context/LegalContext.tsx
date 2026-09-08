@@ -8,7 +8,8 @@ import {
   AdvogadoPerfil,
   StatusProcesso,
   CarnePagamento,
-  ParcelaCarne
+  ParcelaCarne,
+  Movimentacao
 } from '../types/legal';
 import {
   MOCK_PERFIL,
@@ -57,6 +58,9 @@ interface LegalContextType {
   updateCliente: (id: string, atualizado: Partial<Cliente>) => void;
   addDocumentoCliente: (clienteId: string, doc: Omit<DocumentoCliente, 'id' | 'dataAnexo'>) => void;
   addPrazo: (novo: Omit<PrazoAudiencia, 'id' | 'concluido'>) => void;
+  updatePrazo: (id: string, atualizado: Partial<PrazoAudiencia>) => void;
+  deletePrazo: (id: string) => void;
+  addMovimentacaoProcesso: (processoIdOrNumero: string, titulo: string, descricao: string, anexoNome?: string) => void;
   togglePrazoConcluido: (id: string) => void;
   addFinanceiro: (novo: Omit<HonorarioFinanceiro, 'id'>) => void;
   toggleFinanceiroStatus: (id: string) => void;
@@ -97,22 +101,46 @@ export const LegalProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   const [processos, setProcessos] = useState<Processo[]>(() => {
     const saved = localStorage.getItem('bjuris_processos');
-    return saved ? JSON.parse(saved) : [];
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      } catch (e) {}
+    }
+    return MOCK_PROCESSOS;
   });
 
   const [clientes, setClientes] = useState<Cliente[]>(() => {
     const saved = localStorage.getItem('bjuris_clientes');
-    return saved ? JSON.parse(saved) : [];
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      } catch (e) {}
+    }
+    return MOCK_CLIENTES;
   });
 
   const [prazos, setPrazos] = useState<PrazoAudiencia[]>(() => {
     const saved = localStorage.getItem('bjuris_prazos');
-    return saved ? JSON.parse(saved) : [];
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      } catch (e) {}
+    }
+    return MOCK_PRAZOS;
   });
 
   const [financeiro, setFinanceiro] = useState<HonorarioFinanceiro[]>(() => {
     const saved = localStorage.getItem('bjuris_financeiro');
-    return saved ? JSON.parse(saved) : [];
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      } catch (e) {}
+    }
+    return MOCK_FINANCEIRO;
   });
 
   const [carnes, setCarnes] = useState<CarnePagamento[]>(() => {
@@ -274,6 +302,36 @@ export const LegalProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
   };
 
+  const updatePrazo = (id: string, atualizado: Partial<PrazoAudiencia>) => {
+    setPrazos(prev => prev.map(p => p.id === id ? { ...p, ...atualizado } : p));
+  };
+
+  const deletePrazo = (id: string) => {
+    setPrazos(prev => prev.filter(p => p.id !== id));
+  };
+
+  const addMovimentacaoProcesso = (processoIdOrNumero: string, titulo: string, descricao: string, anexoNome?: string) => {
+    setProcessos(prev => prev.map(p => {
+      if (p.id === processoIdOrNumero || p.numeroCnj === processoIdOrNumero) {
+        const novaMov: Movimentacao = {
+          id: `mov-${Date.now()}`,
+          processoId: p.id,
+          data: new Date().toISOString().split('T')[0],
+          titulo,
+          descricao,
+          origem: 'Manual',
+          anexoNome
+        };
+        return {
+          ...p,
+          ultimaMovimentacao: { data: novaMov.data, titulo },
+          movimentacoes: [novaMov, ...p.movimentacoes]
+        };
+      }
+      return p;
+    }));
+  };
+
   const togglePrazoConcluido = (id: string) => {
     setPrazos(prev => prev.map(p => p.id === id ? { ...p, concluido: !p.concluido } : p));
   };
@@ -410,6 +468,9 @@ export const LegalProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       updateCliente,
       addDocumentoCliente,
       addPrazo,
+      updatePrazo,
+      deletePrazo,
+      addMovimentacaoProcesso,
       togglePrazoConcluido,
       addFinanceiro,
       toggleFinanceiroStatus,

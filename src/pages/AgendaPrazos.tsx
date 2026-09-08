@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useLegal } from '../context/LegalContext';
-import { TipoPrazo, PrioridadePrazo } from '../types/legal';
+import { TipoPrazo, PrioridadePrazo, PrazoAudiencia } from '../types/legal';
+import { DetalhesPrazoModal } from '../components/modals/DetalhesPrazoModal';
 import {
   Calendar,
   Clock,
@@ -9,15 +10,15 @@ import {
   AlertTriangle,
   Video,
   MapPin,
-  Volume2
+  Edit3
 } from 'lucide-react';
-import { triggerDeadlineAlert } from '../utils/pwaNotifications';
 
 export const AgendaPrazos: React.FC = () => {
-  const { prazos, togglePrazoConcluido, setModalState, dispararNotificacaoPrazo } = useLegal();
+  const { prazos, togglePrazoConcluido, setModalState } = useLegal();
 
   const [filterTipo, setFilterTipo] = useState<string>('todos');
   const [filterConcluido, setFilterConcluido] = useState<boolean>(false);
+  const [selectedPrazo, setSelectedPrazo] = useState<PrazoAudiencia | null>(null);
 
   const filteredPrazos = prazos.filter(p => {
     const matchesTipo = filterTipo === 'todos' || p.tipo === filterTipo;
@@ -60,7 +61,7 @@ export const AgendaPrazos: React.FC = () => {
             Agenda de Prazos em Atenção & Audiências
           </h2>
           <p className="text-xs text-slate-700 font-bold mt-1">
-            Controle de intimações judiciais, prazos em dias úteis CPC/2015 e alertas com som
+            Controle de intimações judiciais, prazos em dias úteis CPC/2015 e gestão de compromissos
           </p>
         </div>
 
@@ -130,7 +131,8 @@ export const AgendaPrazos: React.FC = () => {
             return (
               <div
                 key={p.id}
-                className={`p-5 rounded-2xl glass-card bg-white border flex flex-col md:flex-row md:items-center justify-between gap-4 transition-all shadow-sm ${
+                onClick={() => setSelectedPrazo(p)}
+                className={`p-5 rounded-2xl glass-card bg-white border flex flex-col md:flex-row md:items-center justify-between gap-4 transition-all shadow-sm cursor-pointer hover:border-amber-500 hover:shadow-md ${
                   p.concluido
                     ? 'border-slate-200 opacity-60 bg-slate-50'
                     : p.prioridade === 'urgente'
@@ -140,7 +142,10 @@ export const AgendaPrazos: React.FC = () => {
               >
                 <div className="flex items-start gap-4">
                   <button
-                    onClick={() => togglePrazoConcluido(p.id)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      togglePrazoConcluido(p.id);
+                    }}
                     className={`mt-1 p-2 rounded-xl transition-all ${
                       p.concluido
                         ? 'bg-emerald-100 text-emerald-800'
@@ -170,6 +175,7 @@ export const AgendaPrazos: React.FC = () => {
                         href={p.linkOnline}
                         target="_blank"
                         rel="noreferrer"
+                        onClick={(e) => e.stopPropagation()}
                         className="inline-flex items-center gap-1.5 text-xs text-blue-700 hover:underline pt-1 font-mono font-black"
                       >
                         <Video className="w-4 h-4 text-blue-600" /> Acessar Sala Telepresencial (Zoom/Teams)
@@ -190,7 +196,7 @@ export const AgendaPrazos: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Right Date & Alert Trigger */}
+                {/* Right Date & Action Trigger */}
                 <div className="flex items-center justify-between md:flex-col md:items-end gap-3 pt-3 md:pt-0 border-t md:border-t-0 border-slate-100">
                   <div className="text-left md:text-right">
                     <span className="text-sm font-black font-mono text-[#8b6508] block">
@@ -201,15 +207,16 @@ export const AgendaPrazos: React.FC = () => {
                     </span>
                   </div>
 
-                  {!p.concluido && (
-                    <button
-                      onClick={() => dispararNotificacaoPrazo(p.id)}
-                      className="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-black transition-all flex items-center gap-1.5 shadow-md"
-                    >
-                      <Volume2 className="w-4 h-4 text-amber-400" />
-                      Disparar Alerta Som
-                    </button>
-                  )}
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setSelectedPrazo(p);
+                    }}
+                    className="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-black transition-all flex items-center gap-1.5 shadow-md"
+                  >
+                    <Edit3 className="w-4 h-4 text-amber-400" />
+                    Editar / Gerenciar
+                  </button>
                 </div>
 
               </div>
@@ -217,6 +224,12 @@ export const AgendaPrazos: React.FC = () => {
           })
         )}
       </div>
+
+      {/* Modal de Detalhes / Edição / Remarcação / Anexo / Arquivamento */}
+      <DetalhesPrazoModal
+        prazo={selectedPrazo}
+        onClose={() => setSelectedPrazo(null)}
+      />
 
     </div>
   );
