@@ -33,7 +33,11 @@ export interface Processo {
   dataDistribuicao: string;
   advogadoResponsavel: string;
   
-  // Previdenciário Specific Fields
+  // Previdenciário & Administrative Specific Fields
+  tipoProcesso?: 'Judicial' | 'Administrativo';
+  numeroProtocolo?: string;
+  senhaMeuInss?: string;
+  origem?: string;
   numeroBeneficioInss?: string; // NB (10 dígitos)
   tipoCalculoRpvPrecatorio?: 'RPV (< 60 SM)' | 'Precatório Federal (> 60 SM)';
   secaoJudiciariaTrf1?: string; // Ex: SJDF, SJMA, SJMG, SJGO, SJBA

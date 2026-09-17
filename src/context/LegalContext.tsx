@@ -110,15 +110,24 @@ export const LegalProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     return MOCK_PROCESSOS;
   });
 
+const SAMPLE_DOC_FALLBACK = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="600" height="400" viewBox="0 0 600 400"><rect width="600" height="400" fill="%23f8fafc" rx="20"/><rect x="20" y="20" width="560" height="360" fill="%23f1f5f9" stroke="%23cbd5e1" stroke-width="4" rx="16"/><rect x="40" y="40" width="520" height="60" fill="%23b8860b" rx="10"/><text x="60" y="78" font-family="sans-serif" font-size="22" font-weight="bold" fill="white">DOCUMENTO DIGITALIZADO - BJURIS</text><rect x="60" y="130" width="130" height="170" fill="%23e2e8f0" stroke="%2394a3b8" stroke-width="2" rx="10"/><circle cx="125" cy="180" r="35" fill="%23cbd5e1"/><path d="M75 270 Q125 225 175 270" fill="%23cbd5e1"/><text x="210" y="150" font-family="sans-serif" font-size="16" font-weight="bold" fill="%230f172a">COMPROVANTE DE IDENTIFICAÇÃO</text><text x="210" y="180" font-family="sans-serif" font-size="14" fill="%23334155">DOCUMENTO: RG / CNH / RESIDÊNCIA</text><text x="210" y="210" font-family="sans-serif" font-size="14" fill="%23334155">DIGITALIZAÇÃO: CÂMERAMOBILE / SCAN</text><text x="210" y="240" font-family="sans-serif" font-size="14" fill="%23334155">STATUS: DOCUMENTO VÁLIDO E VERIFICADO</text><rect x="60" y="320" width="470" height="35" fill="%230f172a" rx="6"/><text x="75" y="343" font-family="monospace" font-size="14" fill="%23fef9c3">SISTEMA BJURIS - ARQUIVO DIGITAL SALVO</text></svg>`;
+
   const [clientes, setClientes] = useState<Cliente[]>(() => {
     const saved = localStorage.getItem('bjuris_clientes');
+    let baseList = MOCK_CLIENTES;
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        if (Array.isArray(parsed) && parsed.length > 0) baseList = parsed;
       } catch (e) {}
     }
-    return MOCK_CLIENTES;
+    return baseList.map(c => ({
+      ...c,
+      documentosAnexados: (c.documentosAnexados || []).map(d => ({
+        ...d,
+        arquivoUrl: d.arquivoUrl || SAMPLE_DOC_FALLBACK
+      }))
+    }));
   });
 
   const [prazos, setPrazos] = useState<PrazoAudiencia[]>(() => {

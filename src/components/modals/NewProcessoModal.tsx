@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useLegal } from '../../context/LegalContext';
 import { AreaProcesso, TipoParte } from '../../types/legal';
 import { LISTA_VARAS_MARANHAO } from '../../services/mockData';
-import { X, Briefcase, Plus, ChevronDown } from 'lucide-react';
+import { X, Briefcase, Plus, ChevronDown, Eye, EyeOff, Lock, Copy, FileText, Shield, FileCheck, Landmark } from 'lucide-react';
 
 // ─── Dados hierárquicos das áreas previdenciárias ────────────────────────────
 const TEMAS_PREVIDENCIARIOS: { categoria: string; itens: string[] }[] = [
@@ -237,11 +237,18 @@ const TEMAS_PREVIDENCIARIOS: { categoria: string; itens: string[] }[] = [
 export const NewProcessoModal: React.FC = () => {
   const { modalState, setModalState, clientes, addProcesso, perfil } = useLegal();
 
+  const [tipoProcesso] = useState<'Judicial' | 'Administrativo'>('Administrativo');
   const [numeroCnj, setNumeroCnj] = useState('');
-  const [tribunal, setTribunal] = useState('TRF');
-  const [vara, setVara] = useState('1ª Vara Federal da Seção Judiciária (Justiça Federal / JEF)');
+  const [numeroProtocolo, setNumeroProtocolo] = useState('');
+  const [senhaMeuInss, setSenhaMeuInss] = useState('');
+  const [mostrarSenhaInss, setMostrarSenhaInss] = useState(false);
+  const [origem, setOrigem] = useState('Indicação de cliente / parceiro');
+  const [origemCustom, setOrigemCustom] = useState('');
+
+  const [tribunal, setTribunal] = useState('INSS / Agência Previdenciária');
+  const [vara, setVara] = useState('APS - Agência da Previdência Social (São Luís - MA)');
   const [varaCustom, setVaraCustom] = useState('');
-  const [classe, setClasse] = useState('Procedimento do Juizado Especial Cível / Previdenciário');
+  const [classe, setClasse] = useState('Requerimento Administrativo INSS');
   const [area, setArea] = useState<AreaProcesso>('Previdenciário');
   const [papelCliente, setPapelCliente] = useState<TipoParte>('Autor');
   const [clienteId, setClienteId] = useState('');
@@ -278,10 +285,15 @@ export const NewProcessoModal: React.FC = () => {
     }
 
     const varaFinal = varaCustom || vara;
+    const origemFinal = origemCustom || origem;
 
     addProcesso({
-      numeroCnj: numeroCnj || `080${Math.floor(1000 + Math.random() * 9000)}-${Math.floor(10 + Math.random() * 89)}.2024.8.10.0001`,
-      tribunal,
+      tipoProcesso: 'Administrativo',
+      numeroCnj: numeroProtocolo ? `PROT-${numeroProtocolo}` : `PROT-${Math.floor(100000000 + Math.random() * 900000000)}`,
+      numeroProtocolo: numeroProtocolo || `PROT-${Math.floor(100000000 + Math.random() * 900000000)}`,
+      senhaMeuInss: senhaMeuInss || undefined,
+      origem: origemFinal || undefined,
+      tribunal: 'INSS / Agência Previdenciária',
       vara: varaFinal,
       classe,
       area,
@@ -289,7 +301,7 @@ export const NewProcessoModal: React.FC = () => {
       status: 'em_andamento',
       clienteId: cliente.id,
       clienteNome: cliente.nome,
-      parteContraria: parteContraria || 'Réu Não Especificado',
+      parteContraria: parteContraria || 'INSS - Instituto Nacional do Seguro Social',
       valorCausa: parseFloat(valorCausa) || 0,
       dataDistribuicao: new Date().toISOString().split('T')[0],
       advogadoResponsavel: perfil.nome,
@@ -313,29 +325,110 @@ export const NewProcessoModal: React.FC = () => {
           <X className="w-6 h-6" />
         </button>
 
-        <div className="flex items-center gap-3 mb-5 pb-3 border-b border-slate-100">
+        <div className="flex items-center gap-3 mb-4 pb-3 border-b border-slate-100">
           <div className="p-3 rounded-xl bg-[#fef9c3] text-[#b8860b] border border-[#d4af37]/40 shadow-sm">
-            <Briefcase className="w-6 h-6" />
+            <Landmark className="w-6 h-6" />
           </div>
           <div>
-            <h3 className="text-lg font-black font-outfit text-slate-900">Cadastrar Novo Processo CNJ</h3>
-            <p className="text-xs text-slate-600 font-bold">Selecione o Tribunal e Vara ou Estado do processo</p>
+            <h3 className="text-lg font-black font-outfit text-slate-900">
+              Cadastrar Novo Processo Administrativo (INSS)
+            </h3>
+            <p className="text-xs text-slate-600 font-bold">
+              Requerimentos, recursos administrativos e gestão do portal Meu INSS
+            </p>
           </div>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Número CNJ */}
-          <div>
-            <label className="block text-xs font-black text-slate-900 mb-1 uppercase tracking-wide">
-              Número do Processo (Padrão CNJ)
+          {/* Painel do Meu INSS & Protocolo */}
+          <div className="p-4 rounded-xl bg-amber-50 border border-amber-300 space-y-3">
+            <span className="text-xs font-black text-amber-900 uppercase tracking-wider flex items-center gap-1.5">
+              <Shield className="w-4 h-4 text-amber-600" />
+              Dados do Requerimento Administrativo (Meu INSS)
+            </span>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {/* Número do Protocolo */}
+              <div>
+                <label className="block text-xs font-bold text-slate-800 mb-1">Número do Protocolo *</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="Ex: 123456789 ou 2024/09876"
+                  value={numeroProtocolo}
+                  onChange={e => setNumeroProtocolo(e.target.value)}
+                  className="w-full bg-white border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-900 font-mono font-bold focus:border-amber-500 focus:outline-none"
+                />
+              </div>
+
+              {/* Senha do Cliente do Meu INSS */}
+              <div>
+                <label className="block text-xs font-bold text-slate-800 mb-1 flex items-center justify-between">
+                  <span>Senha Cliente Meu INSS *</span>
+                  <Lock className="w-3 h-3 text-amber-600" />
+                </label>
+                <div className="relative">
+                  <input
+                    type={mostrarSenhaInss ? "text" : "password"}
+                    placeholder="Senha do gov.br / Meu INSS"
+                    value={senhaMeuInss}
+                    onChange={e => setSenhaMeuInss(e.target.value)}
+                    className="w-full bg-white border border-slate-300 rounded-xl pl-3 pr-16 py-2 text-xs text-slate-900 font-mono font-bold focus:border-amber-500 focus:outline-none"
+                  />
+                  <div className="absolute right-1.5 top-1 flex items-center gap-1">
+                    <button
+                      type="button"
+                      onClick={() => setMostrarSenhaInss(!mostrarSenhaInss)}
+                      className="p-1 text-slate-500 hover:text-slate-800"
+                      title={mostrarSenhaInss ? "Ocultar Senha" : "Exibir Senha"}
+                    >
+                      {mostrarSenhaInss ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                    </button>
+                    {senhaMeuInss && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          navigator.clipboard.writeText(senhaMeuInss);
+                          alert('Senha copiada para a área de transferência!');
+                        }}
+                        className="p-1 text-amber-700 hover:text-amber-900"
+                        title="Copiar Senha"
+                      >
+                        <Copy className="w-3.5 h-3.5" />
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
+            <label className="block text-xs font-black text-slate-900 uppercase tracking-wide">
+              Origem do Cliente / Indicação *
             </label>
-            <input
-              type="text"
-              placeholder="Ex: 0804812-39.2024.8.10.0001"
-              value={numeroCnj}
-              onChange={e => setNumeroCnj(e.target.value)}
-              className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5 text-xs text-slate-900 font-bold placeholder-slate-400 focus:border-[#d4af37] focus:bg-white focus:ring-2 focus:ring-[#d4af37]/30 focus:outline-none"
-            />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              <select
+                value={origem}
+                onChange={e => setOrigem(e.target.value)}
+                className="w-full bg-white border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-900 font-bold focus:border-[#d4af37] focus:outline-none"
+              >
+                <option value="Indicação de cliente / parceiro">Indicação de amigo / parceiro</option>
+                <option value="Redes Sociais (Instagram / Facebook)">Redes Sociais (Instagram / Facebook)</option>
+                <option value="Tráfego Pago">Tráfego Pago (Anúncios / Meta Ads)</option>
+                <option value="Google Ads / Pesquisa">Google Ads / Pesquisa</option>
+                <option value="Atendimento Presencial / Balcão">Atendimento Presencial / Balcão</option>
+                <option value="Recomendação de Outro Cliente">Recomendação de Outro Cliente</option>
+                <option value="Outro (Especificar)">Outro (Especificar ao lado)</option>
+              </select>
+
+              <input
+                type="text"
+                placeholder="Ex: Indicado por Maria da Silva..."
+                value={origemCustom}
+                onChange={e => setOrigemCustom(e.target.value)}
+                className="w-full bg-white border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-900 font-bold placeholder-slate-400 focus:border-[#d4af37] focus:outline-none"
+              />
+            </div>
           </div>
 
           {/* Tribunal + Área */}

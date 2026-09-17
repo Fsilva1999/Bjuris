@@ -65,7 +65,7 @@ export const Navbar: React.FC = () => {
           <Search className="w-4 h-4 text-[#d4af37] absolute left-3 pointer-events-none" />
           <input
             type="text"
-            placeholder="Buscar por nº CNJ, cliente ou vara..."
+            placeholder="Buscar por nº de protocolo, cliente ou benefício..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full bg-slate-100 border border-slate-300 rounded-xl pl-9 pr-4 py-2 text-xs text-slate-900 font-bold placeholder-slate-500 focus:outline-none focus:border-[#d4af37] focus:bg-white focus:ring-2 focus:ring-[#d4af37]/30 transition-all"
@@ -106,7 +106,7 @@ export const Navbar: React.FC = () => {
                   className="w-full px-4 py-2.5 text-left text-xs text-slate-900 hover:bg-[#fef9c3] flex items-center gap-2.5 font-bold"
                 >
                   <Briefcase className="w-4 h-4 text-blue-600" />
-                  Novo Processo CNJ
+                  Novo Processo Administrativo (INSS)
                 </button>
                 <button
                   onClick={() => {

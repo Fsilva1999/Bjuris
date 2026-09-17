@@ -71,7 +71,7 @@ export const Dashboard: React.FC = () => {
             <span className="text-[10px] text-amber-400 font-extrabold mt-0.5">Calculadora INSS</span>
           </button>
 
-          {/* Action 2: Novo Processo CNJ */}
+          {/* Action 2: Novo Processo Administrativo */}
           <button
             onClick={() => setModalState(prev => ({ ...prev, novoProcesso: true }))}
             className="p-4 rounded-2xl bg-gradient-to-br from-slate-900 via-slate-800 to-slate-950 border border-amber-500/40 hover:border-amber-400 text-white flex flex-col items-center justify-center text-center shadow-lg hover:shadow-2xl hover:scale-[1.03] transition-all group relative overflow-hidden"
@@ -81,7 +81,7 @@ export const Dashboard: React.FC = () => {
               <Scale className="w-6 h-6" />
             </div>
             <span className="text-xs font-black text-slate-100 group-hover:text-amber-400 transition-colors">Novo Processo</span>
-            <span className="text-[10px] text-amber-500/80 font-semibold mt-0.5">Cadastrar CNJ</span>
+            <span className="text-[10px] text-amber-500/80 font-semibold mt-0.5">Processo INSS</span>
           </button>
 
           {/* Action 3: Novo Cliente */}

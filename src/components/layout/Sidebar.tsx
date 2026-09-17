@@ -21,7 +21,7 @@ export const Sidebar: React.FC = () => {
   const navItems = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { id: 'previdenciario', label: 'Módulo Previdenciário', icon: ShieldCheck, badge: 'INSS', badgeColor: 'bg-amber-500 text-slate-950 font-black' },
-    { id: 'processos', label: 'Processos CNJ', icon: Briefcase, badge: processos.length },
+    { id: 'processos', label: 'Processos Administrativos', icon: Briefcase, badge: processos.length },
     { id: 'clientes', label: 'Clientes & Documentos', icon: Users },
     { id: 'agenda', label: 'Agenda & Prazos', icon: Calendar, badge: prazosPendentes > 0 ? prazosPendentes : undefined, badgeColor: 'bg-red-600 text-white font-bold' },
     { id: 'financeiro', label: 'Financeiro & Honorários', icon: DollarSign },

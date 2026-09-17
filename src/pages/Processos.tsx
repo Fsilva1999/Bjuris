@@ -26,7 +26,12 @@ import {
   X,
   FileCheck,
   Shield,
-  MessageCircle
+  MessageCircle,
+  Lock,
+  Eye,
+  EyeOff,
+  Copy,
+  Landmark
 } from 'lucide-react';
 
 export const Processos: React.FC = () => {
@@ -41,6 +46,7 @@ export const Processos: React.FC = () => {
   const [activeProcessoDetail, setActiveProcessoDetail] = useState<Processo | null>(null);
   const [novaPecaTitulo, setNovaPecaTitulo] = useState('');
   const [novaPecaDescricao, setNovaPecaDescricao] = useState('');
+  const [revealSenhaMap, setRevealSenhaMap] = useState<Record<string, boolean>>({});
 
   const processCameraInputRef = useRef<HTMLInputElement>(null);
   const processFileInputRef = useRef<HTMLInputElement>(null);
@@ -129,20 +135,20 @@ export const Processos: React.FC = () => {
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
           <h2 className="text-2xl font-black font-outfit text-slate-900 flex items-center gap-2">
-            <Briefcase className="w-7 h-7 text-amber-600" />
-            Gestão de Processos CNJ & Varas
+            <Landmark className="w-7 h-7 text-amber-600" />
+            Gestão de Processos Administrativos (INSS)
           </h2>
           <p className="text-xs text-slate-600 font-medium">
-            Visualização de capa e inteiro teor dos autos digitais (TJ, TRT, TRF e tribunais nacionais)
+            Acompanhamento de requerimentos, recursos administrativos e concessões de benefícios do Meu INSS
           </p>
         </div>
 
         <button
           onClick={() => setModalState(prev => ({ ...prev, novoProcesso: true }))}
-          className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-slate-900 text-white font-extrabold text-xs hover:bg-slate-800 transition-all flex items-center justify-center gap-2 shadow-md"
+          className="w-full sm:w-auto px-5 py-2.5 rounded-xl btn-gold-3d text-slate-950 font-black text-xs transition-all flex items-center justify-center gap-2 shadow-md"
         >
-          <Plus className="w-4 h-4 text-amber-400" />
-          + Cadastrar Processo CNJ
+          <Plus className="w-4 h-4 text-slate-950" />
+          + Cadastrar Processo Administrativo
         </button>
       </div>
 
@@ -152,7 +158,7 @@ export const Processos: React.FC = () => {
           <Search className="w-4 h-4 text-amber-600 absolute left-3 top-3" />
           <input
             type="text"
-            placeholder="Buscar por nº CNJ, cliente, parte contrária ou Vara..."
+            placeholder="Buscar por nº de protocolo, cliente, benefício ou agência APS..."
             value={searchTerm}
             onChange={e => setSearchTerm(e.target.value)}
             className="w-full bg-slate-50 border border-slate-300 rounded-xl pl-9 pr-4 py-2 text-xs text-slate-900 font-medium focus:border-amber-500 focus:bg-white focus:outline-none"
@@ -217,10 +223,24 @@ export const Processos: React.FC = () => {
             >
               <div className="space-y-1.5 flex-1">
                 <div className="flex flex-wrap items-center gap-2">
+                  <span className={`text-[10px] font-black px-2.5 py-0.5 rounded border uppercase flex items-center gap-1 ${
+                    proc.tipoProcesso === 'Administrativo' ? 'bg-purple-100 text-purple-900 border-purple-300' : 'bg-slate-900 text-white'
+                  }`}>
+                    {proc.tipoProcesso === 'Administrativo' ? <Landmark className="w-3 h-3 text-purple-700" /> : <Briefcase className="w-3 h-3 text-amber-400" />}
+                    {proc.tipoProcesso || 'Judicial'}
+                  </span>
+
                   <span className="text-xs font-mono font-black text-amber-900 bg-amber-100 px-3 py-0.5 rounded border border-amber-300">
                     {proc.numeroCnj}
                   </span>
-                  <span className="text-[10px] font-black px-2 py-0.5 rounded bg-slate-900 text-white uppercase">
+
+                  {proc.numeroProtocolo && (
+                    <span className="text-xs font-mono font-extrabold text-blue-900 bg-blue-50 px-2.5 py-0.5 rounded border border-blue-200">
+                      Protocolo: {proc.numeroProtocolo}
+                    </span>
+                  )}
+
+                  <span className="text-[10px] font-black px-2 py-0.5 rounded bg-slate-800 text-slate-100 uppercase">
                     {proc.tribunal}
                   </span>
                   <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-800 border border-slate-300">
@@ -241,7 +261,42 @@ export const Processos: React.FC = () => {
                 <div className="flex flex-wrap items-center gap-4 text-xs text-slate-600 font-medium pt-1">
                   <span>Valor Causa: <strong className="text-slate-900 font-mono font-black">R$ {proc.valorCausa.toLocaleString('pt-BR')}</strong></span>
                   <span>Distribuído em: <strong className="text-slate-900">{proc.dataDistribuicao}</strong></span>
+                  {proc.origem && (
+                    <span>Origem: <strong className="text-amber-800 font-semibold">{proc.origem}</strong></span>
+                  )}
                 </div>
+
+                {/* Exibição da Senha do Meu INSS com opção de cópia/revelação */}
+                {proc.senhaMeuInss && (
+                  <div className="mt-2.5 p-2 px-3 rounded-xl bg-amber-50 border border-amber-300 flex items-center justify-between text-xs w-full sm:w-auto inline-flex gap-3">
+                    <div className="flex items-center gap-2">
+                      <Lock className="w-3.5 h-3.5 text-amber-700" />
+                      <span className="font-bold text-amber-950">Senha Meu INSS:</span>
+                      <span className="font-mono font-bold text-slate-900">
+                        {revealSenhaMap[proc.id] ? proc.senhaMeuInss : '••••••••'}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <button
+                        onClick={() => setRevealSenhaMap(prev => ({ ...prev, [proc.id]: !prev[proc.id] }))}
+                        className="p-1 rounded text-slate-600 hover:text-slate-900 transition-colors"
+                        title={revealSenhaMap[proc.id] ? "Ocultar Senha" : "Exibir Senha"}
+                      >
+                        {revealSenhaMap[proc.id] ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                      </button>
+                      <button
+                        onClick={() => {
+                          navigator.clipboard.writeText(proc.senhaMeuInss || '');
+                          alert('Senha copiada com sucesso!');
+                        }}
+                        className="p-1 rounded text-amber-800 hover:text-amber-950 font-bold transition-colors flex items-center gap-1 text-[11px]"
+                        title="Copiar Senha"
+                      >
+                        <Copy className="w-3.5 h-3.5" /> Copiar
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Actions & Drawer Trigger */}
@@ -288,8 +343,17 @@ export const Processos: React.FC = () => {
             <div className="border-b border-slate-200 pb-4 mb-5">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <div className="flex items-center gap-2">
+                  <span className={`text-[10px] font-black px-2.5 py-0.5 rounded border uppercase flex items-center gap-1 ${
+                    activeProcessoDetail.tipoProcesso === 'Administrativo' ? 'bg-purple-100 text-purple-900 border-purple-300' : 'bg-slate-900 text-white'
+                  }`}>
+                    {activeProcessoDetail.tipoProcesso === 'Administrativo' ? <Landmark className="w-3 h-3 text-purple-700" /> : <Briefcase className="w-3 h-3 text-amber-400" />}
+                    {activeProcessoDetail.tipoProcesso || 'Judicial'}
+                  </span>
+
                   <span className="text-sm font-mono font-black text-amber-900 bg-amber-100 px-3 py-1 rounded border border-amber-300">
-                    Nº CNJ: {activeProcessoDetail.numeroCnj}
+                    {activeProcessoDetail.tipoProcesso === 'Administrativo' && activeProcessoDetail.numeroProtocolo
+                      ? `Protocolo: ${activeProcessoDetail.numeroProtocolo}`
+                      : `Nº CNJ: ${activeProcessoDetail.numeroCnj}`}
                   </span>
                   {getStatusBadge(activeProcessoDetail.status)}
                 </div>
@@ -314,7 +378,7 @@ export const Processos: React.FC = () => {
             </div>
 
             {/* Ficha da Capa do Processo */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 p-4 rounded-xl bg-slate-50 border border-slate-200 mb-6 text-xs">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 p-4 rounded-xl bg-slate-50 border border-slate-200 mb-4 text-xs">
               <div>
                 <span className="text-slate-500 font-semibold block text-[10px] uppercase">Classe Processual</span>
                 <strong className="text-slate-900 font-bold">{activeProcessoDetail.classe}</strong>
@@ -328,10 +392,46 @@ export const Processos: React.FC = () => {
                 <strong className="text-slate-900 font-bold">{activeProcessoDetail.dataDistribuicao}</strong>
               </div>
               <div>
-                <span className="text-slate-500 font-semibold block text-[10px] uppercase">Advogado Responsável</span>
-                <strong className="text-slate-900 font-bold">{activeProcessoDetail.advogadoResponsavel}</strong>
+                <span className="text-slate-500 font-semibold block text-[10px] uppercase">Origem da Captação</span>
+                <strong className="text-slate-900 font-bold">{activeProcessoDetail.origem || 'Não informada'}</strong>
               </div>
             </div>
+
+            {/* Se houver Senha do Meu INSS, exibir box de destaque com copiar/revelar */}
+            {activeProcessoDetail.senhaMeuInss && (
+              <div className="p-3 rounded-xl bg-amber-50 border border-amber-300 mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-xs">
+                <div className="flex items-center gap-2">
+                  <div className="p-2 rounded-lg bg-amber-200 text-amber-900 font-black">
+                    <Lock className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <span className="text-amber-950 font-black block">Credenciais do Portal Meu INSS / Gov.br</span>
+                    <span className="font-mono font-bold text-slate-900 text-sm">
+                      Senha: {revealSenhaMap[activeProcessoDetail.id] ? activeProcessoDetail.senhaMeuInss : '••••••••••••'}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setRevealSenhaMap(prev => ({ ...prev, [activeProcessoDetail.id]: !prev[activeProcessoDetail.id] }))}
+                    className="px-3 py-1.5 rounded-xl bg-white border border-slate-300 text-slate-800 font-bold hover:bg-slate-100 transition-colors flex items-center gap-1"
+                  >
+                    {revealSenhaMap[activeProcessoDetail.id] ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                    {revealSenhaMap[activeProcessoDetail.id] ? 'Ocultar' : 'Exibir'}
+                  </button>
+                  <button
+                    onClick={() => {
+                      navigator.clipboard.writeText(activeProcessoDetail.senhaMeuInss || '');
+                      alert('Senha do Meu INSS copiada para a área de transferência!');
+                    }}
+                    className="px-3 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 font-black flex items-center gap-1 transition-all shadow-sm"
+                  >
+                    <Copy className="w-3.5 h-3.5" /> Copiar Senha
+                  </button>
+                </div>
+              </div>
+            )}
 
             {/* Form to attach new piece directly to lawsuit */}
             <div className="p-4 rounded-xl bg-amber-500/10 border border-amber-500/30 mb-6 space-y-3">

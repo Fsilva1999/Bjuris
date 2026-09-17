@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import jsPDF from 'jspdf';
 import { useLegal } from '../context/LegalContext';
 import { Cliente, DocumentoCliente } from '../types/legal';
 import {
@@ -22,7 +23,10 @@ import {
   Paperclip,
   Eye,
   FolderOpen,
-  Edit3
+  Edit3,
+  Download,
+  ExternalLink,
+  Printer
 } from 'lucide-react';
 
 export const Clientes: React.FC = () => {
@@ -32,6 +36,7 @@ export const Clientes: React.FC = () => {
   const [filterTipo, setFilterTipo] = useState<'todos' | 'PF' | 'PJ'>('todos');
   const [selectedCliente, setSelectedCliente] = useState<Cliente | null>(null);
   const [editingCliente, setEditingCliente] = useState<Cliente | null>(null);
+  const [previewDoc, setPreviewDoc] = useState<DocumentoCliente | null>(null);
 
   // File Upload & Camera Scan State for Selected Client
   const cameraInputRef = useRef<HTMLInputElement>(null);
@@ -68,16 +73,104 @@ export const Clientes: React.FC = () => {
   const handleAddDocumentoDirect = (cliente: Cliente, origem: 'upload' | 'camera_scan', file?: File) => {
     const tituloDoc = docTitulo || `${docTipoSelect} - ${file ? file.name : 'Digitalizado via Câmera'}`;
 
-    addDocumentoCliente(cliente.id, {
-      tipo: docTipoSelect,
-      titulo: tituloDoc,
-      origem,
-      tamanhoKb: file ? Math.round(file.size / 1024) : 450
-    });
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const dataUrl = e.target?.result as string;
+        const novoDocObj: DocumentoCliente = {
+          id: `doc-${Date.now()}`,
+          tipo: docTipoSelect,
+          titulo: tituloDoc,
+          dataAnexo: new Date().toISOString().split('T')[0],
+          origem,
+          arquivoUrl: dataUrl,
+          tamanhoKb: Math.round(file.size / 1024)
+        };
 
-    setDocTitulo('');
-    alert(`Documento "${docTipoSelect}" anexado ao cliente ${cliente.nome} com sucesso!`);
-    setSelectedCliente(cliente);
+        addDocumentoCliente(cliente.id, {
+          tipo: docTipoSelect,
+          titulo: tituloDoc,
+          origem,
+          arquivoUrl: dataUrl,
+          tamanhoKb: Math.round(file.size / 1024)
+        });
+
+        setDocTitulo('');
+        alert(`Documento "${docTipoSelect}" anexado ao cliente ${cliente.nome} com sucesso!`);
+        
+        setSelectedCliente(prev => prev && prev.id === cliente.id ? {
+          ...prev,
+          documentosAnexados: [novoDocObj, ...(prev.documentosAnexados || [])]
+        } : prev);
+      };
+      reader.readAsDataURL(file);
+    } else {
+      addDocumentoCliente(cliente.id, {
+        tipo: docTipoSelect,
+        titulo: tituloDoc,
+        origem,
+        tamanhoKb: 450
+      });
+      setDocTitulo('');
+      alert(`Documento "${docTipoSelect}" anexado ao cliente ${cliente.nome} com sucesso!`);
+    }
+  };
+
+  const handleBaixarTodosPdfCompilado = (cliente: Cliente) => {
+    const docs = cliente.documentosAnexados || [];
+    if (docs.length === 0) {
+      alert('Nenhum documento anexado para este cliente.');
+      return;
+    }
+
+    try {
+      const pdf = new jsPDF();
+      
+      pdf.setFontSize(16);
+      pdf.text(`DOSSIÊ COMPILADO DE DOCUMENTOS - BJURIS`, 14, 20);
+      pdf.setFontSize(11);
+      pdf.text(`Cliente: ${cliente.nome}`, 14, 30);
+      pdf.text(`CPF/CNPJ: ${cliente.documento}`, 14, 37);
+      if (cliente.rgOuIe) pdf.text(`RG/IE: ${cliente.rgOuIe}`, 14, 44);
+      pdf.text(`Total de documentos no dossiê: ${docs.length}`, 14, 51);
+      pdf.text(`Data da geração: ${new Date().toLocaleDateString('pt-BR')} às ${new Date().toLocaleTimeString('pt-BR')}`, 14, 58);
+      pdf.line(14, 64, 196, 64);
+
+      let yPos = 74;
+      docs.forEach((d, idx) => {
+        if (yPos > 260) {
+          pdf.addPage();
+          yPos = 20;
+        }
+
+        pdf.setFontSize(11);
+        pdf.setFont('helvetica', 'bold');
+        pdf.text(`${idx + 1}. ${d.titulo} (${d.tipo})`, 14, yPos);
+        pdf.setFont('helvetica', 'normal');
+        pdf.setFontSize(9);
+        pdf.text(`Anexado em: ${d.dataAnexo} | Origem: ${d.origem === 'camera_scan' ? 'Câmera Scan' : 'Upload File'} | Tamanho: ${d.tamanhoKb || 0} KB`, 14, yPos + 6);
+        yPos += 14;
+
+        if (d.arquivoUrl && d.arquivoUrl.startsWith('data:image')) {
+          try {
+            pdf.addPage();
+            pdf.setFontSize(10);
+            pdf.setFont('helvetica', 'bold');
+            pdf.text(`Documento ${idx + 1}: ${d.titulo}`, 14, 15);
+            pdf.addImage(d.arquivoUrl, 'JPEG', 14, 22, 180, 240, undefined, 'FAST');
+            yPos = 20;
+          } catch (e) {
+            console.error('Erro ao anexar imagem ao PDF:', e);
+          }
+        }
+      });
+
+      pdf.save(`Dossie_${cliente.nome.replace(/\s+/g, '_')}.pdf`);
+      alert('✅ PDF Dossiê Compilado gerado com sucesso!');
+    } catch (err) {
+      console.error(err);
+      alert('Ocorreu um erro ao gerar o PDF compilado.');
+    }
   };
 
   return (
@@ -394,7 +487,21 @@ export const Clientes: React.FC = () => {
 
             {/* List of Attached Documents */}
             <div className="space-y-3">
-              <h4 className="text-xs font-bold text-slate-900 uppercase tracking-wider">Documentos Digitais Salvos no Perfil</h4>
+              <div className="flex items-center justify-between">
+                <h4 className="text-xs font-black text-slate-900 uppercase tracking-wider">
+                  Documentos Digitais Salvos no Perfil ({selectedCliente.documentosAnexados?.length || 0})
+                </h4>
+
+                {(selectedCliente.documentosAnexados || []).length > 0 && (
+                  <button
+                    onClick={() => handleBaixarTodosPdfCompilado(selectedCliente)}
+                    className="px-3 py-1.5 rounded-xl btn-gold-3d text-slate-950 font-black text-xs transition-all shadow-sm flex items-center gap-1.5"
+                  >
+                    <Download className="w-3.5 h-3.5" />
+                    Baixar Todos (PDF Compilado)
+                  </button>
+                )}
+              </div>
 
               {(selectedCliente.documentosAnexados || []).length === 0 ? (
                 <div className="text-center py-8 bg-slate-50 rounded-xl border border-slate-200 text-xs text-slate-500 font-medium">
@@ -402,22 +509,70 @@ export const Clientes: React.FC = () => {
                 </div>
               ) : (
                 selectedCliente.documentosAnexados.map(d => (
-                  <div key={d.id} className="p-3.5 rounded-xl bg-white border border-slate-200 flex items-center justify-between gap-3 shadow-sm">
+                  <div key={d.id} className="p-3.5 rounded-xl bg-white border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-sm hover:border-amber-400 transition-all">
                     <div className="flex items-center gap-3">
-                      <div className="p-2 rounded-lg bg-amber-100 text-amber-800 border border-amber-300">
-                        <FileCheck className="w-4 h-4" />
-                      </div>
+                      {d.arquivoUrl && d.arquivoUrl.startsWith('data:image') ? (
+                        <div
+                          onClick={() => setPreviewDoc(d)}
+                          className="w-10 h-10 rounded-lg overflow-hidden border border-amber-300 cursor-pointer flex-shrink-0 relative group"
+                        >
+                          <img src={d.arquivoUrl} alt={d.titulo} className="w-full h-full object-cover" />
+                          <div className="absolute inset-0 bg-slate-900/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white">
+                            <Eye className="w-4 h-4" />
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="p-2.5 rounded-lg bg-amber-100 text-amber-800 border border-amber-300 flex-shrink-0">
+                          <FileCheck className="w-5 h-5" />
+                        </div>
+                      )}
+
                       <div>
                         <span className="text-xs font-bold text-slate-900 block">{d.titulo}</span>
                         <span className="text-[11px] text-slate-500 font-mono font-medium">
-                          {d.tipo} • Anexado em {d.dataAnexo} ({d.tamanhoKb} KB)
+                          {d.tipo} • Anexado em {d.dataAnexo} ({d.tamanhoKb || 0} KB)
                         </span>
                       </div>
                     </div>
 
-                    <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-amber-100 text-amber-900 border border-amber-300 uppercase">
-                      {d.origem === 'camera_scan' ? '📷 Escaneado' : '📁 Upload'}
-                    </span>
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-800 border border-slate-300 uppercase">
+                        {d.origem === 'camera_scan' ? '📷 Escaneado' : '📁 Upload'}
+                      </span>
+
+                      {/* Botão de Visualização */}
+                      <button
+                        onClick={() => {
+                          if (d.arquivoUrl) {
+                            setPreviewDoc(d);
+                          } else {
+                            alert('Este documento não possui pré-visualização salva.');
+                          }
+                        }}
+                        className="px-2.5 py-1.5 rounded-lg bg-amber-100 hover:bg-amber-200 text-amber-950 font-bold text-xs transition-colors flex items-center gap-1 border border-amber-300"
+                        title="Visualizar documento / foto"
+                      >
+                        <Eye className="w-3.5 h-3.5 text-amber-700" />
+                        Ver
+                      </button>
+
+                      {/* Botão de Download Individual */}
+                      <a
+                        href={d.arquivoUrl || '#'}
+                        download={`${d.titulo.replace(/\s+/g, '_')}.${d.arquivoUrl?.includes('data:image/png') ? 'png' : d.arquivoUrl?.includes('data:application/pdf') ? 'pdf' : 'jpg'}`}
+                        onClick={(e) => {
+                          if (!d.arquivoUrl) {
+                            e.preventDefault();
+                            alert('Arquivo sem conteúdo binário para download.');
+                          }
+                        }}
+                        className="px-2.5 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs transition-colors flex items-center gap-1 shadow-sm"
+                        title="Baixar arquivo individual"
+                      >
+                        <Download className="w-3.5 h-3.5 text-amber-400" />
+                        Baixar
+                      </a>
+                    </div>
                   </div>
                 ))
               )}
@@ -430,6 +585,78 @@ export const Clientes: React.FC = () => {
               >
                 Concluir
               </button>
+            </div>
+
+          </div>
+        </div>
+      )}
+
+      {/* Lightbox / Preview Modal para Fotos e Documentos */}
+      {previewDoc && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-in fade-in">
+          <div className="w-full max-w-3xl bg-white rounded-2xl border border-slate-200 shadow-2xl p-6 relative max-h-[92vh] flex flex-col justify-between">
+            
+            <button
+              onClick={() => setPreviewDoc(null)}
+              className="absolute top-4 right-4 text-slate-400 hover:text-slate-900 transition-colors bg-slate-100 p-1.5 rounded-xl border border-slate-200"
+            >
+              <X className="w-6 h-6" />
+            </button>
+
+            <div className="flex items-center gap-3 mb-4 pb-3 border-b border-slate-100">
+              <div className="p-2.5 rounded-xl bg-amber-100 text-amber-800 border border-amber-300">
+                <FileText className="w-6 h-6" />
+              </div>
+              <div>
+                <h3 className="text-base font-extrabold text-slate-900">{previewDoc.titulo}</h3>
+                <p className="text-xs text-slate-600 font-medium">Tipo: {previewDoc.tipo} • Anexado em {previewDoc.dataAnexo}</p>
+              </div>
+            </div>
+
+            {/* Document / Photo View Container */}
+            <div className="flex-1 overflow-auto max-h-[60vh] bg-slate-900 rounded-xl p-3 flex items-center justify-center">
+              {previewDoc.arquivoUrl && previewDoc.arquivoUrl.startsWith('data:image') ? (
+                <img
+                  src={previewDoc.arquivoUrl}
+                  alt={previewDoc.titulo}
+                  className="max-h-[58vh] w-auto max-w-full object-contain rounded-lg shadow-lg"
+                />
+              ) : previewDoc.arquivoUrl && previewDoc.arquivoUrl.startsWith('data:application/pdf') ? (
+                <iframe
+                  src={previewDoc.arquivoUrl}
+                  title={previewDoc.titulo}
+                  className="w-full h-[55vh] rounded-lg border-0"
+                />
+              ) : (
+                <div className="text-center py-12 text-slate-300 space-y-3">
+                  <FileCheck className="w-12 h-12 mx-auto text-amber-400" />
+                  <p className="text-xs font-bold">Arquivo digital cadastrado ({previewDoc.tamanhoKb} KB)</p>
+                  <p className="text-[11px] text-slate-400">Clique no botão abaixo para baixar o arquivo diretamente.</p>
+                </div>
+              )}
+            </div>
+
+            {/* Preview Footer Actions */}
+            <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between">
+              <span className="text-xs font-mono text-slate-500 font-bold">
+                Origem: {previewDoc.origem === 'camera_scan' ? 'Escaneamento por Câmera' : 'Upload de Arquivo'}
+              </span>
+
+              <div className="flex items-center gap-2">
+                <a
+                  href={previewDoc.arquivoUrl || '#'}
+                  download={`${previewDoc.titulo.replace(/\s+/g, '_')}.${previewDoc.arquivoUrl?.includes('data:image/png') ? 'png' : previewDoc.arquivoUrl?.includes('data:application/pdf') ? 'pdf' : 'jpg'}`}
+                  className="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 font-black text-xs transition-all shadow-sm flex items-center gap-1.5"
+                >
+                  <Download className="w-4 h-4" /> Baixar Documento
+                </a>
+                <button
+                  onClick={() => setPreviewDoc(null)}
+                  className="px-4 py-2 rounded-xl bg-slate-900 text-white font-bold text-xs hover:bg-slate-800 transition-colors"
+                >
+                  Fechar
+                </button>
+              </div>
             </div>
 
           </div>
